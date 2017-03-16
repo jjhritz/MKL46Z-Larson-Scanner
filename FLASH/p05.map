@@ -1,0 +1,611 @@
+
+Discarded input sections
+
+ .data          0x00000000        0x0 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+ .bss           0x00000000        0x0 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+ .text          0x00000000       0x20 ./Project_Settings/CSE325_Lib/signed_int_mod.o
+ .data          0x00000000        0x0 ./Project_Settings/CSE325_Lib/signed_int_mod.o
+ .bss           0x00000000        0x0 ./Project_Settings/CSE325_Lib/signed_int_mod.o
+ .ARM.attributes
+                0x00000000       0x21 ./Project_Settings/CSE325_Lib/signed_int_mod.o
+ .debug_line    0x00000000       0x6c ./Project_Settings/CSE325_Lib/signed_int_mod.o
+ .debug_info    0x00000000       0x8c ./Project_Settings/CSE325_Lib/signed_int_mod.o
+ .debug_abbrev  0x00000000       0x14 ./Project_Settings/CSE325_Lib/signed_int_mod.o
+ .debug_aranges
+                0x00000000       0x20 ./Project_Settings/CSE325_Lib/signed_int_mod.o
+ .data          0x00000000        0x0 ./Project_Settings/CSE325_Lib/signed_int_div.o
+ .bss           0x00000000        0x0 ./Project_Settings/CSE325_Lib/signed_int_div.o
+ .text          0x00000000        0x0 ./Project_Settings/CSE325_Lib/libcse325.o
+ .data          0x00000000        0x0 ./Project_Settings/CSE325_Lib/libcse325.o
+ .bss           0x00000000        0x0 ./Project_Settings/CSE325_Lib/libcse325.o
+ .text          0x00000000        0x0 ./Project_Settings/Startup_Code/bare_startup.o
+ .data          0x00000000        0x0 ./Project_Settings/Startup_Code/bare_startup.o
+ .bss           0x00000000        0x0 ./Project_Settings/Startup_Code/bare_startup.o
+ .data          0x00000000        0x0 ./Project_Settings/Startup_Code/bare_asm_startup.o
+ .bss           0x00000000        0x0 ./Project_Settings/Startup_Code/bare_asm_startup.o
+ .text          0x00000000        0x0 ./Sources/systick.o
+ .data          0x00000000        0x0 ./Sources/systick.o
+ .bss           0x00000000        0x0 ./Sources/systick.o
+ .text.systick_read
+                0x00000000       0x14 ./Sources/systick.o
+ .text          0x00000000        0x0 ./Sources/scanner.o
+ .data          0x00000000        0x0 ./Sources/scanner.o
+ .bss           0x00000000        0x0 ./Sources/scanner.o
+ .text          0x00000000        0x0 ./Sources/pushb.o
+ .data          0x00000000        0x0 ./Sources/pushb.o
+ .bss           0x00000000        0x0 ./Sources/pushb.o
+ .text          0x00000000        0x0 ./Sources/port.o
+ .data          0x00000000        0x0 ./Sources/port.o
+ .bss           0x00000000        0x0 ./Sources/port.o
+ .text          0x00000000        0x0 ./Sources/main.o
+ .data          0x00000000        0x0 ./Sources/main.o
+ .bss           0x00000000        0x0 ./Sources/main.o
+ .text          0x00000000        0x0 ./Sources/led.o
+ .data          0x00000000        0x0 ./Sources/led.o
+ .bss           0x00000000        0x0 ./Sources/led.o
+ .text.led_all_on
+                0x00000000       0x38 ./Sources/led.o
+ .text          0x00000000        0x0 ./Sources/int.o
+ .data          0x00000000        0x0 ./Sources/int.o
+ .bss           0x00000000        0x0 ./Sources/int.o
+ .text.int_cfg_pending_state
+                0x00000000       0x64 ./Sources/int.o
+ .text.int_get_pending_state
+                0x00000000       0x34 ./Sources/int.o
+ .text.int_get_priority
+                0x00000000       0x50 ./Sources/int.o
+ .text.int_get_state
+                0x00000000       0x30 ./Sources/int.o
+ .text          0x00000000        0x0 ./Sources/gpio.o
+ .data          0x00000000        0x0 ./Sources/gpio.o
+ .bss           0x00000000        0x0 ./Sources/gpio.o
+ .text          0x00000000        0x0 ./Sources/global.o
+ .data          0x00000000        0x0 ./Sources/global.o
+ .bss           0x00000000        0x0 ./Sources/global.o
+ .rodata.GLOBAL_FREQ_EXT_CRYSTAL_HZ
+                0x00000000        0x4 ./Sources/global.o
+ .rodata.GLOBAL_FREQ_EXT_CRYSTAL_KHZ
+                0x00000000        0x4 ./Sources/global.o
+ .rodata.GLOBAL_FREQ_EXT_CRYSTAL_MHz
+                0x00000000        0x4 ./Sources/global.o
+ .text          0x00000000        0x0 ./Sources/frdm_led.o
+ .data          0x00000000        0x0 ./Sources/frdm_led.o
+ .bss           0x00000000        0x0 ./Sources/frdm_led.o
+ .data.FRDM_LED_RED_PIN
+                0x00000000        0x4 ./Sources/frdm_led.o
+ .data.FRDM_LED_GREEN_PIN
+                0x00000000        0x4 ./Sources/frdm_led.o
+ .text.frdm_led_green_init
+                0x00000000       0x38 ./Sources/frdm_led.o
+ .text.frdm_led_green_off
+                0x00000000       0x28 ./Sources/frdm_led.o
+ .text.frdm_led_green_on
+                0x00000000       0x28 ./Sources/frdm_led.o
+ .text.frdm_led_green_state
+                0x00000000       0x30 ./Sources/frdm_led.o
+ .text.frdm_led_green_toggle
+                0x00000000       0x28 ./Sources/frdm_led.o
+ .text.frdm_led_red_init
+                0x00000000       0x48 ./Sources/frdm_led.o
+ .text.frdm_led_red_off
+                0x00000000       0x28 ./Sources/frdm_led.o
+ .text.frdm_led_red_on
+                0x00000000       0x28 ./Sources/frdm_led.o
+ .text.frdm_led_red_state
+                0x00000000       0x30 ./Sources/frdm_led.o
+ .text.frdm_led_red_toggle
+                0x00000000       0x28 ./Sources/frdm_led.o
+ .debug_info    0x00000000      0x2bd ./Sources/frdm_led.o
+ .debug_abbrev  0x00000000      0x104 ./Sources/frdm_led.o
+ .debug_loc     0x00000000      0x1d0 ./Sources/frdm_led.o
+ .debug_aranges
+                0x00000000       0x68 ./Sources/frdm_led.o
+ .debug_macinfo
+                0x00000000    0x30990 ./Sources/frdm_led.o
+ .debug_line    0x00000000      0x154 ./Sources/frdm_led.o
+ .debug_str     0x00000000      0x296 ./Sources/frdm_led.o
+ .comment       0x00000000       0x7a ./Sources/frdm_led.o
+ .ARM.attributes
+                0x00000000       0x31 ./Sources/frdm_led.o
+ .debug_frame   0x00000000      0x134 ./Sources/frdm_led.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+m_interrupts     0x00000000         0x000000c0         xr
+m_cfmprotrom     0x00000400         0x00000010         xr
+m_text           0x00000800         0x0003f800         xr
+m_data           0x1fffe000         0x00008000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+LOAD ./Project_Settings/CSE325_Lib/signed_int_mod.o
+LOAD ./Project_Settings/CSE325_Lib/signed_int_div.o
+LOAD ./Project_Settings/CSE325_Lib/libcse325.o
+LOAD ./Project_Settings/Startup_Code/bare_startup.o
+LOAD ./Project_Settings/Startup_Code/bare_asm_startup.o
+LOAD ./Sources/systick.o
+LOAD ./Sources/scanner.o
+LOAD ./Sources/pushb.o
+LOAD ./Sources/port.o
+LOAD ./Sources/main.o
+LOAD ./Sources/led.o
+LOAD ./Sources/int.o
+LOAD ./Sources/gpio.o
+LOAD ./Sources/global.o
+LOAD ./Sources/frdm_led.o
+                0x20005ffc                __init_sp = 0x20005ffc
+
+.interrupts     0x00000000       0xc0
+                0x00000000                __vector_table = .
+                0x00000000                . = ALIGN (0x4)
+ *(.vectortable)
+ .vectortable   0x00000000       0xc0 ./Project_Settings/Startup_Code/bare_startup.o
+                0x00000000                bare_vector_table
+                0x000000c0                . = ALIGN (0x4)
+
+.cfmprotect     0x00000400        0x0
+                0x00000400                . = ALIGN (0x4)
+ *(.cfmconfig)
+                0x00000400                . = ALIGN (0x4)
+
+.text           0x00000800      0xed0
+                0x00000800                . = ALIGN (0x4)
+ *(.text)
+ .text          0x00000800       0x30 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+                0x00000800                __aeabi_uidiv
+                0x00000800                __aeabi_uidivmod
+                0x00000800                __udivsi3
+ .text          0x00000830       0x1e ./Project_Settings/CSE325_Lib/signed_int_div.o
+                0x00000830                __divsi3
+                0x00000830                __aeabi_idiv
+ *fill*         0x0000084e        0x2 00
+ .text          0x00000850       0x2c ./Project_Settings/Startup_Code/bare_asm_startup.o
+                0x00000850                bare_sp_init
+                0x00000860                bare_startup
+ *(.text*)
+ .text.cse325_memcpy
+                0x0000087c       0x4c ./Project_Settings/CSE325_Lib/libcse325.o
+                0x0000087c                cse325_memcpy
+ .text.cse325_memset
+                0x000008c8       0x3c ./Project_Settings/CSE325_Lib/libcse325.o
+                0x000008c8                cse325_memset
+ .text.bare_bss_zero_fill
+                0x00000904       0x24 ./Project_Settings/Startup_Code/bare_startup.o
+                0x00000904                bare_bss_zero_fill
+ .text.bare_clocks_init
+                0x00000928      0x154 ./Project_Settings/Startup_Code/bare_startup.o
+ .text.bare_copy_rom_sections_to_ram
+                0x00000a7c       0x68 ./Project_Settings/Startup_Code/bare_startup.o
+                0x00000a7c                bare_copy_rom_sections_to_ram
+ .text.bare_default_isr
+                0x00000ae4        0xc ./Project_Settings/Startup_Code/bare_startup.o
+                0x00000ae4                adc0_isr
+                0x00000ae4                uart0_isr
+                0x00000ae4                i2c0_isr
+                0x00000ae4                tpm1_isr
+                0x00000ae4                slcd_isr
+                0x00000ae4                uart2_isr
+                0x00000ae4                spi1_isr
+                0x00000ae4                dma0_isr
+                0x00000ae4                i2c1_isr
+                0x00000ae4                lptimer_isr
+                0x00000ae4                spi0_isr
+                0x00000ae4                dma1_isr
+                0x00000ae4                dma3_isr
+                0x00000ae4                tsi0_isr
+                0x00000ae4                rtcalarm_isr
+                0x00000ae4                pendsv_isr
+                0x00000ae4                uart1_isr
+                0x00000ae4                porta_isr
+                0x00000ae4                ftfa_isr
+                0x00000ae4                pmc_isr
+                0x00000ae4                svc_isr
+                0x00000ae4                tpm0_isr
+                0x00000ae4                nmi_isr
+                0x00000ae4                dma2_isr
+                0x00000ae4                i2s0_isr
+                0x00000ae4                cmp0_isr
+                0x00000ae4                rtcsecs_isr
+                0x00000ae4                pit_isr
+                0x00000ae4                usbotg_isr
+                0x00000ae4                dac0_isr
+                0x00000ae4                bare_default_isr
+                0x00000ae4                mcg_isr
+                0x00000ae4                llw_isr
+                0x00000ae4                tpm2_isr
+ .text.bare_hardfault_isr
+                0x00000af0        0xc ./Project_Settings/Startup_Code/bare_startup.o
+                0x00000af0                bare_hardfault_isr
+ .text.bare_hw_init
+                0x00000afc       0x30 ./Project_Settings/Startup_Code/bare_startup.o
+                0x00000afc                bare_hw_init
+ .text.systick_cfg_callback
+                0x00000b2c       0x18 ./Sources/systick.o
+                0x00000b2c                systick_cfg_callback
+ .text.systick_cfg_clk_src
+                0x00000b44       0x38 ./Sources/systick.o
+                0x00000b44                systick_cfg_clk_src
+ .text.systick_cfg_int_state
+                0x00000b7c       0x38 ./Sources/systick.o
+                0x00000b7c                systick_cfg_int_state
+ .text.systick_cfg_state
+                0x00000bb4       0x38 ./Sources/systick.o
+                0x00000bb4                systick_cfg_state
+ .text.systick_init
+                0x00000bec       0x54 ./Sources/systick.o
+                0x00000bec                systick_init
+ .text.systick_isr
+                0x00000c40       0x24 ./Sources/systick.o
+                0x00000c40                systick_isr
+ .text.systick_reset
+                0x00000c64       0x44 ./Sources/systick.o
+                0x00000c64                systick_reset
+ .text.systick_callback
+                0x00000ca8       0x4c ./Sources/scanner.o
+                0x00000ca8                systick_callback
+ .text.scanner_next
+                0x00000cf4       0x84 ./Sources/scanner.o
+                0x00000cf4                scanner_next
+ .text.pushb_init
+                0x00000d78       0x30 ./Sources/pushb.o
+                0x00000d78                pushb_init
+ .text.pushb1_callback
+                0x00000da8       0x48 ./Sources/pushb.o
+                0x00000da8                pushb1_callback
+ .text.pushb2_callback
+                0x00000df0       0x30 ./Sources/pushb.o
+                0x00000df0                pushb2_callback
+ .text.pushb_portc_debounce
+                0x00000e20       0x5c ./Sources/pushb.o
+                0x00000e20                pushb_portc_debounce
+ .text.callback_init
+                0x00000e7c       0x20 ./Sources/port.o
+                0x00000e7c                callback_init
+ .text.port_gpio_config
+                0x00000e9c       0x5c ./Sources/port.o
+                0x00000e9c                port_gpio_config
+ .text.portscd_isr
+                0x00000ef8       0x74 ./Sources/port.o
+                0x00000ef8                portscd_isr
+ .text.hardware_init
+                0x00000f6c      0x100 ./Sources/main.o
+                0x00000f6c                hardware_init
+ .text.sw_init  0x0000106c        0xc ./Sources/main.o
+                0x0000106c                sw_init
+ .text.run      0x00001078        0x8 ./Sources/main.o
+                0x00001078                run
+ .text.main     0x00001080       0x18 ./Sources/main.o
+                0x00001080                main
+ .text.led_on   0x00001098      0x18c ./Sources/led.o
+                0x00001098                led_on
+ .text.led_off  0x00001224      0x18c ./Sources/led.o
+                0x00001224                led_off
+ .text.led_all_off
+                0x000013b0       0x38 ./Sources/led.o
+                0x000013b0                led_all_off
+ .text.int_cfg_priority
+                0x000013e8       0x70 ./Sources/int.o
+                0x000013e8                int_cfg_priority
+ .text.int_cfg_state
+                0x00001458       0x58 ./Sources/int.o
+                0x00001458                int_cfg_state
+ .text.int_init
+                0x000014b0       0x38 ./Sources/int.o
+                0x000014b0                int_init
+ .text.int_mask_all
+                0x000014e8        0xc ./Sources/int.o
+                0x000014e8                int_mask_all
+ .text.int_unmask_all
+                0x000014f4        0xc ./Sources/int.o
+                0x000014f4                int_unmask_all
+ .text.gpioa_pddr_config
+                0x00001500       0x4c ./Sources/gpio.o
+                0x00001500                gpioa_pddr_config
+ .text.gpiob_pddr_config
+                0x0000154c       0x4c ./Sources/gpio.o
+                0x0000154c                gpiob_pddr_config
+ .text.gpioc_pddr_config
+                0x00001598       0x4c ./Sources/gpio.o
+                0x00001598                gpioc_pddr_config
+ .text.gpiod_pddr_config
+                0x000015e4       0x4c ./Sources/gpio.o
+                0x000015e4                gpiod_pddr_config
+ *(.rodata)
+ *(.rodata*)
+ .rodata.led_on
+                0x00001630       0x50 ./Sources/led.o
+ .rodata.led_off
+                0x00001680       0x50 ./Sources/led.o
+                0x000016d0                . = ALIGN (0x4)
+                0x000016d0                ___ROM_AT = .
+
+.glue_7         0x000016d0        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x000016d0        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x000016d0        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x000016d0        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x000016d0        0x0
+ .iplt          0x00000000        0x0 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+
+.rel.dyn        0x000016d0        0x0
+ .rel.iplt      0x00000000        0x0 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+
+.data           0x1fffe000        0x4 load address 0x000016d0
+                0x1fffe000                . = ALIGN (0x4)
+                0x1fffe000                __data_begin = .
+ *(.data)
+ *(.data*)
+ .data.current_period_ms
+                0x1fffe000        0x4 ./Sources/pushb.o
+                0x1fffe000                current_period_ms
+                0x1fffe004                . = ALIGN (0x4)
+                0x1fffe004                __data_end = .
+                0x00000004                __data_size = (__data_end - __data_begin)
+
+.igot.plt       0x1fffe004        0x0 load address 0x000016d4
+ .igot.plt      0x00000000        0x0 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+                0x1fffe004                . = ALIGN (0x4)
+
+.bss            0x1fffe004       0xb0 load address 0x000016d4
+                0x1fffe004                PROVIDE (__bss_begin, .)
+ *(.bss)
+ *(.bss*)
+ .bss.g_callback
+                0x1fffe004        0x4 ./Sources/systick.o
+ .bss.scanner_dir
+                0x1fffe008        0x1 ./Sources/scanner.o
+                0x1fffe008                scanner_dir
+ .bss.led_logic
+                0x1fffe009        0x1 ./Sources/scanner.o
+                0x1fffe009                led_logic
+ *fill*         0x1fffe00a        0x2 00
+ .bss.scanner_pos
+                0x1fffe00c        0x4 ./Sources/scanner.o
+ .bss.systick_counter
+                0x1fffe010        0x4 ./Sources/scanner.o
+ .bss.pb2_pressed
+                0x1fffe014        0x1 ./Sources/pushb.o
+ *fill*         0x1fffe015        0x3 00
+ .bss.g_portc_callback
+                0x1fffe018       0x80 ./Sources/port.o
+                0x1fffe018                g_portc_callback
+ .bss.global_bus_clock_freq_mhz
+                0x1fffe098        0x4 ./Sources/global.o
+                0x1fffe098                global_bus_clock_freq_mhz
+ .bss.global_core_clock_freq_mhz
+                0x1fffe09c        0x4 ./Sources/global.o
+                0x1fffe09c                global_core_clock_freq_mhz
+ .bss.global_flash_clock_freq_mhz
+                0x1fffe0a0        0x4 ./Sources/global.o
+                0x1fffe0a0                global_flash_clock_freq_mhz
+ .bss.global_mcgirclk_freq_mhz
+                0x1fffe0a4        0x4 ./Sources/global.o
+                0x1fffe0a4                global_mcgirclk_freq_mhz
+ .bss.global_platform_clock_freq_mhz
+                0x1fffe0a8        0x4 ./Sources/global.o
+                0x1fffe0a8                global_platform_clock_freq_mhz
+ .bss.global_oscerclk_freq_mhz
+                0x1fffe0ac        0x4 ./Sources/global.o
+                0x1fffe0ac                global_oscerclk_freq_mhz
+ .bss.global_system_clock_freq_mhz
+                0x1fffe0b0        0x4 ./Sources/global.o
+                0x1fffe0b0                global_system_clock_freq_mhz
+ *(COMMON)
+                0x1fffe0b4                . = ALIGN (0x4)
+                0x1fffe0b4                PROVIDE (__bss_end, .)
+                0x000016d4                __romp_at = (___ROM_AT + SIZEOF (.data))
+
+.romp           0x1fffe0b4       0x18 load address 0x000016d4
+                0x000016d4                __romp = __romp_at
+                0x1fffe0b4        0x4 LONG 0x16d0 ___ROM_AT
+                0x1fffe0b8        0x4 LONG 0x1fffe000 __data_begin
+                0x1fffe0bc        0x4 LONG 0x4 __data_size
+                0x1fffe0c0        0x4 LONG 0x0
+                0x1fffe0c4        0x4 LONG 0x0
+                0x1fffe0c8        0x4 LONG 0x0
+OUTPUT(p05.elf elf32-littlearm)
+
+.ARM.attributes
+                0x00000000       0x2d
+ .ARM.attributes
+                0x00000000       0x21 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+ .ARM.attributes
+                0x00000021       0x21 ./Project_Settings/CSE325_Lib/signed_int_div.o
+ .ARM.attributes
+                0x00000042       0x31 ./Project_Settings/CSE325_Lib/libcse325.o
+ .ARM.attributes
+                0x00000073       0x31 ./Project_Settings/Startup_Code/bare_startup.o
+ .ARM.attributes
+                0x000000a4       0x21 ./Project_Settings/Startup_Code/bare_asm_startup.o
+ .ARM.attributes
+                0x000000c5       0x31 ./Sources/systick.o
+ .ARM.attributes
+                0x000000f6       0x31 ./Sources/scanner.o
+ .ARM.attributes
+                0x00000127       0x31 ./Sources/pushb.o
+ .ARM.attributes
+                0x00000158       0x31 ./Sources/port.o
+ .ARM.attributes
+                0x00000189       0x31 ./Sources/main.o
+ .ARM.attributes
+                0x000001ba       0x31 ./Sources/led.o
+ .ARM.attributes
+                0x000001eb       0x31 ./Sources/int.o
+ .ARM.attributes
+                0x0000021c       0x31 ./Sources/gpio.o
+ .ARM.attributes
+                0x0000024d       0x31 ./Sources/global.o
+
+.comment        0x00000000       0x79
+ .comment       0x00000000       0x79 ./Project_Settings/CSE325_Lib/libcse325.o
+                                 0x7a (size before relaxing)
+ .comment       0x00000000       0x7a ./Project_Settings/Startup_Code/bare_startup.o
+ .comment       0x00000000       0x7a ./Sources/systick.o
+ .comment       0x00000000       0x7a ./Sources/scanner.o
+ .comment       0x00000000       0x7a ./Sources/pushb.o
+ .comment       0x00000000       0x7a ./Sources/port.o
+ .comment       0x00000000       0x7a ./Sources/main.o
+ .comment       0x00000000       0x7a ./Sources/led.o
+ .comment       0x00000000       0x7a ./Sources/int.o
+ .comment       0x00000000       0x7a ./Sources/gpio.o
+ .comment       0x00000000       0x7a ./Sources/global.o
+
+.debug_line     0x00000000      0xcec
+ .debug_line    0x00000000       0x78 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+ .debug_line    0x00000078       0x6c ./Project_Settings/CSE325_Lib/signed_int_div.o
+ .debug_line    0x000000e4       0xe2 ./Project_Settings/CSE325_Lib/libcse325.o
+ .debug_line    0x000001c6      0x16d ./Project_Settings/Startup_Code/bare_startup.o
+ .debug_line    0x00000333       0x72 ./Project_Settings/Startup_Code/bare_asm_startup.o
+ .debug_line    0x000003a5      0x13d ./Sources/systick.o
+ .debug_line    0x000004e2       0xe9 ./Sources/scanner.o
+ .debug_line    0x000005cb      0x10c ./Sources/pushb.o
+ .debug_line    0x000006d7       0xf4 ./Sources/port.o
+ .debug_line    0x000007cb      0x136 ./Sources/main.o
+ .debug_line    0x00000901      0x145 ./Sources/led.o
+ .debug_line    0x00000a46      0x13a ./Sources/int.o
+ .debug_line    0x00000b80       0xe2 ./Sources/gpio.o
+ .debug_line    0x00000c62       0x8a ./Sources/global.o
+
+.debug_info     0x00000000     0x2053
+ .debug_info    0x00000000       0x8e ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+ .debug_info    0x0000008e       0x8c ./Project_Settings/CSE325_Lib/signed_int_div.o
+ .debug_info    0x0000011a       0xef ./Project_Settings/CSE325_Lib/libcse325.o
+ .debug_info    0x00000209      0x711 ./Project_Settings/Startup_Code/bare_startup.o
+ .debug_info    0x0000091a       0x90 ./Project_Settings/Startup_Code/bare_asm_startup.o
+ .debug_info    0x000009aa      0x393 ./Sources/systick.o
+ .debug_info    0x00000d3d      0x195 ./Sources/scanner.o
+ .debug_info    0x00000ed2      0x228 ./Sources/pushb.o
+ .debug_info    0x000010fa      0x19c ./Sources/port.o
+ .debug_info    0x00001296      0x4c4 ./Sources/main.o
+ .debug_info    0x0000175a      0x208 ./Sources/led.o
+ .debug_info    0x00001962      0x41b ./Sources/int.o
+ .debug_info    0x00001d7d      0x1b8 ./Sources/gpio.o
+ .debug_info    0x00001f35      0x11e ./Sources/global.o
+
+.debug_abbrev   0x00000000      0xa17
+ .debug_abbrev  0x00000000       0x14 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+ .debug_abbrev  0x00000014       0x14 ./Project_Settings/CSE325_Lib/signed_int_div.o
+ .debug_abbrev  0x00000028       0x79 ./Project_Settings/CSE325_Lib/libcse325.o
+ .debug_abbrev  0x000000a1      0x185 ./Project_Settings/Startup_Code/bare_startup.o
+ .debug_abbrev  0x00000226       0x14 ./Project_Settings/Startup_Code/bare_asm_startup.o
+ .debug_abbrev  0x0000023a       0xfe ./Sources/systick.o
+ .debug_abbrev  0x00000338       0xff ./Sources/scanner.o
+ .debug_abbrev  0x00000437       0xee ./Sources/pushb.o
+ .debug_abbrev  0x00000525       0xf6 ./Sources/port.o
+ .debug_abbrev  0x0000061b       0xed ./Sources/main.o
+ .debug_abbrev  0x00000708       0xf7 ./Sources/led.o
+ .debug_abbrev  0x000007ff      0x111 ./Sources/int.o
+ .debug_abbrev  0x00000910       0xba ./Sources/gpio.o
+ .debug_abbrev  0x000009ca       0x4d ./Sources/global.o
+
+.debug_aranges  0x00000000      0x2d8
+ .debug_aranges
+                0x00000000       0x20 ./Project_Settings/CSE325_Lib/unsigned_int_div.o
+ .debug_aranges
+                0x00000020       0x20 ./Project_Settings/CSE325_Lib/signed_int_div.o
+ .debug_aranges
+                0x00000040       0x28 ./Project_Settings/CSE325_Lib/libcse325.o
+ .debug_aranges
+                0x00000068       0x48 ./Project_Settings/Startup_Code/bare_startup.o
+ .debug_aranges
+                0x000000b0       0x20 ./Project_Settings/Startup_Code/bare_asm_startup.o
+ .debug_aranges
+                0x000000d0       0x58 ./Sources/systick.o
+ .debug_aranges
+                0x00000128       0x28 ./Sources/scanner.o
+ .debug_aranges
+                0x00000150       0x38 ./Sources/pushb.o
+ .debug_aranges
+                0x00000188       0x30 ./Sources/port.o
+ .debug_aranges
+                0x000001b8       0x38 ./Sources/main.o
+ .debug_aranges
+                0x000001f0       0x38 ./Sources/led.o
+ .debug_aranges
+                0x00000228       0x60 ./Sources/int.o
+ .debug_aranges
+                0x00000288       0x38 ./Sources/gpio.o
+ .debug_aranges
+                0x000002c0       0x18 ./Sources/global.o
+
+.debug_loc      0x00000000      0x938
+ .debug_loc     0x00000000       0x70 ./Project_Settings/CSE325_Lib/libcse325.o
+ .debug_loc     0x00000070      0x120 ./Project_Settings/Startup_Code/bare_startup.o
+ .debug_loc     0x00000190      0x1a8 ./Sources/systick.o
+ .debug_loc     0x00000338       0x64 ./Sources/scanner.o
+ .debug_loc     0x0000039c       0xbc ./Sources/pushb.o
+ .debug_loc     0x00000458       0x90 ./Sources/port.o
+ .debug_loc     0x000004e8       0xb0 ./Sources/main.o
+ .debug_loc     0x00000598       0xe0 ./Sources/led.o
+ .debug_loc     0x00000678      0x1e0 ./Sources/int.o
+ .debug_loc     0x00000858       0xe0 ./Sources/gpio.o
+
+.debug_macinfo  0x00000000   0x216e56
+ .debug_macinfo
+                0x00000000    0x30991 ./Project_Settings/CSE325_Lib/libcse325.o
+ .debug_macinfo
+                0x00030991    0x309ab ./Project_Settings/Startup_Code/bare_startup.o
+ .debug_macinfo
+                0x0006133c    0x309f2 ./Sources/systick.o
+ .debug_macinfo
+                0x00091d2e    0x309eb ./Sources/scanner.o
+ .debug_macinfo
+                0x000c2719    0x30ae3 ./Sources/pushb.o
+ .debug_macinfo
+                0x000f31fc    0x30ae7 ./Sources/port.o
+ .debug_macinfo
+                0x00123ce3    0x30b2e ./Sources/main.o
+ .debug_macinfo
+                0x00154811    0x3098c ./Sources/led.o
+ .debug_macinfo
+                0x0018519d    0x3098b ./Sources/int.o
+ .debug_macinfo
+                0x001b5b28    0x309b0 ./Sources/gpio.o
+ .debug_macinfo
+                0x001e64d8    0x3097e ./Sources/global.o
+
+.debug_str      0x00000000      0xf1d
+ .debug_str     0x00000000      0x14c ./Project_Settings/CSE325_Lib/libcse325.o
+                                0x158 (size before relaxing)
+ .debug_str     0x0000014c      0x35b ./Project_Settings/Startup_Code/bare_startup.o
+                                0x444 (size before relaxing)
+ .debug_str     0x000004a7      0x47b ./Sources/systick.o
+                                0x570 (size before relaxing)
+ .debug_str     0x00000922       0xcd ./Sources/scanner.o
+                                0x1de (size before relaxing)
+ .debug_str     0x000009ef       0xc0 ./Sources/pushb.o
+                                0x212 (size before relaxing)
+ .debug_str     0x00000aaf       0x8c ./Sources/port.o
+                                0x189 (size before relaxing)
+ .debug_str     0x00000b3b      0x17e ./Sources/main.o
+                                0x68f (size before relaxing)
+ .debug_str     0x00000cb9       0x42 ./Sources/led.o
+                                0x193 (size before relaxing)
+ .debug_str     0x00000cfb      0x157 ./Sources/int.o
+                                0x3d4 (size before relaxing)
+ .debug_str     0x00000e52       0x64 ./Sources/gpio.o
+                                0x187 (size before relaxing)
+ .debug_str     0x00000eb6       0x67 ./Sources/global.o
+                                0x210 (size before relaxing)
+
+.debug_frame    0x00000000      0x618
+ .debug_frame   0x00000000       0x50 ./Project_Settings/CSE325_Lib/libcse325.o
+ .debug_frame   0x00000050       0xc0 ./Project_Settings/Startup_Code/bare_startup.o
+ .debug_frame   0x00000110      0x108 ./Sources/systick.o
+ .debug_frame   0x00000218       0x4c ./Sources/scanner.o
+ .debug_frame   0x00000264       0x84 ./Sources/pushb.o
+ .debug_frame   0x000002e8       0x68 ./Sources/port.o
+ .debug_frame   0x00000350       0x80 ./Sources/main.o
+ .debug_frame   0x000003d0       0x90 ./Sources/led.o
+ .debug_frame   0x00000460      0x128 ./Sources/int.o
+ .debug_frame   0x00000588       0x90 ./Sources/gpio.o

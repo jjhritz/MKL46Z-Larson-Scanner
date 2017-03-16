@@ -1,0 +1,2896 @@
+
+p05.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .interrupts   000000c0  00000000  00000000  000000b4  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         00000ed0  00000800  00000800  00000174  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .data         00000004  1fffe000  000016d0  00001044  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .bss          000000b0  1fffe004  000016d4  00001048  2**2
+                  ALLOC
+  4 .romp         00000018  1fffe0b4  000016d4  00001048  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  5 .ARM.attributes 0000002d  00000000  00000000  00001060  2**0
+                  CONTENTS, READONLY
+  6 .comment      00000079  00000000  00000000  0000108d  2**0
+                  CONTENTS, READONLY
+  7 .debug_line   00000cec  00000000  00000000  00001106  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_info   00002053  00000000  00000000  00001df2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_abbrev 00000a17  00000000  00000000  00003e45  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_aranges 000002d8  00000000  00000000  00004860  2**3
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    00000938  00000000  00000000  00004b38  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_macinfo 00216e56  00000000  00000000  00005470  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_str    00000f1d  00000000  00000000  0021c2c6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .debug_frame  00000618  00000000  00000000  0021d1e4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000800 <__aeabi_uidiv>:
+	.thumb_func
+        .global __aeabi_uidivmod
+__aeabi_uidivmod:
+
+
+	cmp	r1, #0
+     800:	2900      	cmp	r1, #0
+	bne	L_no_div0
+     802:	d100      	bne.n	806 <L_no_div0>
+	b	__aeabi_idiv
+     804:	e014      	b.n	830 <__aeabi_idiv>
+
+00000806 <L_no_div0>:
+L_no_div0:
+
+	@ Shift left the denominator until it is greater than the numerator
+	movs	r2, #1		@ counter
+     806:	2201      	movs	r2, #1
+	movs	r3, #0		@ result
+     808:	2300      	movs	r3, #0
+	cmp	r0, r1
+     80a:	4288      	cmp	r0, r1
+	bls	L_sub_loop0
+     80c:	d906      	bls.n	81c <L_sub_loop0>
+	adds	r1, #0		@ dont shift if denominator would overflow
+     80e:	3100      	adds	r1, #0
+	bmi	L_sub_loop0
+     810:	d404      	bmi.n	81c <L_sub_loop0>
+
+00000812 <L_denom_shift_loop>:
+
+L_denom_shift_loop:
+	lsls	r2, #1
+     812:	0052      	lsls	r2, r2, #1
+	lsls	r1, #1
+     814:	0049      	lsls	r1, r1, #1
+	bmi	L_sub_loop0
+     816:	d401      	bmi.n	81c <L_sub_loop0>
+	cmp	r0, r1
+     818:	4288      	cmp	r0, r1
+	bhi	L_denom_shift_loop
+     81a:	d8fa      	bhi.n	812 <L_denom_shift_loop>
+
+0000081c <L_sub_loop0>:
+
+L_sub_loop0:
+	cmp	r0, r1
+     81c:	4288      	cmp	r0, r1
+	bcc	L_dont_sub0	@ if (num>denom)
+     81e:	d301      	bcc.n	824 <L_dont_sub0>
+
+	subs	r0, r1		@ numerator -= denom
+     820:	1a40      	subs	r0, r0, r1
+	orrs	r3, r2		@ result(r3) |= bitmask(r2)
+     822:	4313      	orrs	r3, r2
+
+00000824 <L_dont_sub0>:
+L_dont_sub0:
+
+	lsrs	r1, #1		@ denom(r1) >>= 1
+     824:	0849      	lsrs	r1, r1, #1
+	lsrs	r2, #1		@ bitmask(r2) >>= 1
+     826:	0852      	lsrs	r2, r2, #1
+	bne	L_sub_loop0
+     828:	d1f8      	bne.n	81c <L_sub_loop0>
+
+	mov	r1, r0		@ remainder(r1) = numerator(r0)
+     82a:	4601      	mov	r1, r0
+	mov	r0, r3		@ quotient(r0) = result(r3)
+     82c:	4618      	mov	r0, r3
+	bx	lr
+     82e:	4770      	bx	lr
+
+00000830 <__aeabi_idiv>:
+@
+	.thumb_func
+        .global __aeabi_idiv
+__aeabi_idiv:
+
+	cmp	r0, #0
+     830:	2800      	cmp	r0, #0
+	bge	L_num_pos
+     832:	da04      	bge.n	83e <L_num_pos>
+
+	rsbs	r0, r0, #0		@ num = -num
+     834:	4240      	negs	r0, r0
+
+	cmp	r1, #0
+     836:	2900      	cmp	r1, #0
+	bge	L_neg_result
+     838:	da04      	bge.n	844 <L_neg_result>
+
+	rsbs	r1, r1, #0		@ den = -den
+     83a:	4249      	negs	r1, r1
+	b	__aeabi_uidivmod
+     83c:	e7e0      	b.n	800 <__aeabi_uidiv>
+
+0000083e <L_num_pos>:
+
+L_num_pos:
+	cmp	r1, #0
+     83e:	2900      	cmp	r1, #0
+	bge	__aeabi_uidivmod
+     840:	dade      	bge.n	800 <__aeabi_uidiv>
+
+	rsbs	r1, r1, #0		@ den = -den
+     842:	4249      	negs	r1, r1
+
+00000844 <L_neg_result>:
+
+L_neg_result:
+	push	{lr}
+     844:	b500      	push	{lr}
+	bl	__aeabi_uidivmod
+     846:	f7ff ffdb 	bl	800 <__aeabi_uidiv>
+	rsbs	r0, r0, #0		@ quot = -quot
+     84a:	4240      	negs	r0, r0
+	pop	{pc}
+     84c:	bd00      	pop	{pc}
+	...
+
+00000850 <bare_sp_init>:
+@-----------------------------------------------------------------------------------------------------------------------
+.func bare_sp_init, bare_sp_init
+.type bare_sp_init, %function
+.thumb_func
+bare_sp_init:
+    ldr     r0, =__init_sp              @ r0 = memory address where SP register is initialized to point to
+     850:	4809      	ldr	r0, [pc, #36]	; (878 <bare_startup+0x18>)
+    ldr     r1, dead_beef               @ r1 = 0xDEAD_BEEF
+     852:	4902      	ldr	r1, [pc, #8]	; (85c <dead_beef>)
+    str     r1, [r0]                    @ MEM[__init_sp] = 0xDEADBEEF
+     854:	6001      	str	r1, [r0, #0]
+    mov     sp, r0                      @ sp = __init_sp
+     856:	4685      	mov	sp, r0
+    bx      lr                          @ return
+     858:	4770      	bx	lr
+     85a:	46c0      	nop			; (mov r8, r8)
+
+0000085c <dead_beef>:
+     85c:	deadbeef 	.word	0xdeadbeef
+
+00000860 <bare_startup>:
+@-----------------------------------------------------------------------------------------------------------------------
+.func bare_startup, bare_startup
+.type bare_startup, %function
+.thumb_func
+bare_startup:
+    bl      bare_sp_init                   @ bare_sp_init()
+     860:	f7ff fff6 	bl	850 <bare_sp_init>
+    bl      bare_hw_init                   @ bare_hw_init()
+     864:	f000 f94a 	bl	afc <bare_hw_init>
+    bl      bare_bss_zero_fill             @ bare_bss_zero_fill()
+     868:	f000 f84c 	bl	904 <bare_bss_zero_fill>
+    bl      bare_copy_rom_sections_to_ram  @ bare_copy_rom_sections_to_ram()
+     86c:	f000 f906 	bl	a7c <bare_copy_rom_sections_to_ram>
+    bl      main
+     870:	f000 fc06 	bl	1080 <main>
+
+@ Drop into an infinite loop if main() should return
+1:  b       1b
+     874:	e7fe      	b.n	874 <bare_startup+0x14>
+     876:	0000      	.short	0x0000
+@-----------------------------------------------------------------------------------------------------------------------
+.func bare_sp_init, bare_sp_init
+.type bare_sp_init, %function
+.thumb_func
+bare_sp_init:
+    ldr     r0, =__init_sp              @ r0 = memory address where SP register is initialized to point to
+     878:	20005ffc 	.word	0x20005ffc
+
+0000087c <cse325_memcpy>:
+//
+// DESCRIPTION
+// See comments in libcse325.h.
+//----------------------------------------------------------------------------------------------------------------------
+void cse325_memcpy(uint8_t *p_dst, uint8_t *p_src, int p_size)
+{
+     87c:	b580      	push	{r7, lr}
+     87e:	b084      	sub	sp, #16
+     880:	af00      	add	r7, sp, #0
+     882:	60f8      	str	r0, [r7, #12]
+     884:	60b9      	str	r1, [r7, #8]
+     886:	607a      	str	r2, [r7, #4]
+    if (p_dst == p_src || !p_dst || !p_src) return;
+     888:	68fa      	ldr	r2, [r7, #12]
+     88a:	68bb      	ldr	r3, [r7, #8]
+     88c:	429a      	cmp	r2, r3
+     88e:	d017      	beq.n	8c0 <cse325_memcpy+0x44>
+     890:	68fb      	ldr	r3, [r7, #12]
+     892:	2b00      	cmp	r3, #0
+     894:	d014      	beq.n	8c0 <cse325_memcpy+0x44>
+     896:	68bb      	ldr	r3, [r7, #8]
+     898:	2b00      	cmp	r3, #0
+     89a:	d10d      	bne.n	8b8 <cse325_memcpy+0x3c>
+     89c:	e010      	b.n	8c0 <cse325_memcpy+0x44>
+    for ( ; p_size > 0; --p_size) {
+        *p_dst++ = *p_src++;
+     89e:	68bb      	ldr	r3, [r7, #8]
+     8a0:	781a      	ldrb	r2, [r3, #0]
+     8a2:	68fb      	ldr	r3, [r7, #12]
+     8a4:	701a      	strb	r2, [r3, #0]
+     8a6:	68fb      	ldr	r3, [r7, #12]
+     8a8:	3301      	adds	r3, #1
+     8aa:	60fb      	str	r3, [r7, #12]
+     8ac:	68bb      	ldr	r3, [r7, #8]
+     8ae:	3301      	adds	r3, #1
+     8b0:	60bb      	str	r3, [r7, #8]
+// See comments in libcse325.h.
+//----------------------------------------------------------------------------------------------------------------------
+void cse325_memcpy(uint8_t *p_dst, uint8_t *p_src, int p_size)
+{
+    if (p_dst == p_src || !p_dst || !p_src) return;
+    for ( ; p_size > 0; --p_size) {
+     8b2:	687b      	ldr	r3, [r7, #4]
+     8b4:	3b01      	subs	r3, #1
+     8b6:	607b      	str	r3, [r7, #4]
+     8b8:	687b      	ldr	r3, [r7, #4]
+     8ba:	2b00      	cmp	r3, #0
+     8bc:	dcef      	bgt.n	89e <cse325_memcpy+0x22>
+     8be:	e000      	b.n	8c2 <cse325_memcpy+0x46>
+// DESCRIPTION
+// See comments in libcse325.h.
+//----------------------------------------------------------------------------------------------------------------------
+void cse325_memcpy(uint8_t *p_dst, uint8_t *p_src, int p_size)
+{
+    if (p_dst == p_src || !p_dst || !p_src) return;
+     8c0:	46c0      	nop			; (mov r8, r8)
+    for ( ; p_size > 0; --p_size) {
+        *p_dst++ = *p_src++;
+    }
+}
+     8c2:	46bd      	mov	sp, r7
+     8c4:	b004      	add	sp, #16
+     8c6:	bd80      	pop	{r7, pc}
+
+000008c8 <cse325_memset>:
+//
+// DESCRIPTION
+// See comments in libcse325.h.
+//----------------------------------------------------------------------------------------------------------------------
+void cse325_memset(uint8_t *p_begin, uint8_t p_fill_value, int p_size)
+{
+     8c8:	b580      	push	{r7, lr}
+     8ca:	b084      	sub	sp, #16
+     8cc:	af00      	add	r7, sp, #0
+     8ce:	60f8      	str	r0, [r7, #12]
+     8d0:	607a      	str	r2, [r7, #4]
+     8d2:	1c3b      	adds	r3, r7, #0
+     8d4:	330b      	adds	r3, #11
+     8d6:	1c0a      	adds	r2, r1, #0
+     8d8:	701a      	strb	r2, [r3, #0]
+    if (!p_begin) return;
+     8da:	68fb      	ldr	r3, [r7, #12]
+     8dc:	2b00      	cmp	r3, #0
+     8de:	d10b      	bne.n	8f8 <cse325_memset+0x30>
+     8e0:	e00d      	b.n	8fe <cse325_memset+0x36>
+    for ( ; p_size > 0; --p_size) {
+        *p_begin++ = p_fill_value;
+     8e2:	68fb      	ldr	r3, [r7, #12]
+     8e4:	1c3a      	adds	r2, r7, #0
+     8e6:	320b      	adds	r2, #11
+     8e8:	7812      	ldrb	r2, [r2, #0]
+     8ea:	701a      	strb	r2, [r3, #0]
+     8ec:	68fb      	ldr	r3, [r7, #12]
+     8ee:	3301      	adds	r3, #1
+     8f0:	60fb      	str	r3, [r7, #12]
+// See comments in libcse325.h.
+//----------------------------------------------------------------------------------------------------------------------
+void cse325_memset(uint8_t *p_begin, uint8_t p_fill_value, int p_size)
+{
+    if (!p_begin) return;
+    for ( ; p_size > 0; --p_size) {
+     8f2:	687b      	ldr	r3, [r7, #4]
+     8f4:	3b01      	subs	r3, #1
+     8f6:	607b      	str	r3, [r7, #4]
+     8f8:	687b      	ldr	r3, [r7, #4]
+     8fa:	2b00      	cmp	r3, #0
+     8fc:	dcf1      	bgt.n	8e2 <cse325_memset+0x1a>
+        *p_begin++ = p_fill_value;
+    }
+}
+     8fe:	46bd      	mov	sp, r7
+     900:	b004      	add	sp, #16
+     902:	bd80      	pop	{r7, pc}
+
+00000904 <bare_bss_zero_fill>:
+// DESCRIPTION
+// This function fills the .bss section in RAM with all zeros. __bss_begin and __bss_end are defined in the linker
+// script.
+//----------------------------------------------------------------------------------------------------------------------
+void bare_bss_zero_fill()
+{
+     904:	b580      	push	{r7, lr}
+     906:	af00      	add	r7, sp, #0
+    extern uint8_t __bss_begin[];
+    extern uint8_t __bss_end[];
+    cse325_memset(__bss_begin, 0, __bss_end - __bss_begin);
+     908:	4a05      	ldr	r2, [pc, #20]	; (920 <bare_bss_zero_fill+0x1c>)
+     90a:	4b06      	ldr	r3, [pc, #24]	; (924 <bare_bss_zero_fill+0x20>)
+     90c:	1ad3      	subs	r3, r2, r3
+     90e:	4a05      	ldr	r2, [pc, #20]	; (924 <bare_bss_zero_fill+0x20>)
+     910:	1c10      	adds	r0, r2, #0
+     912:	2100      	movs	r1, #0
+     914:	1c1a      	adds	r2, r3, #0
+     916:	f7ff ffd7 	bl	8c8 <cse325_memset>
+}
+     91a:	46bd      	mov	sp, r7
+     91c:	bd80      	pop	{r7, pc}
+     91e:	46c0      	nop			; (mov r8, r8)
+     920:	1fffe0b4 	.word	0x1fffe0b4
+     924:	1fffe004 	.word	0x1fffe004
+
+00000928 <bare_clocks_init>:
+// DESCRIPTION
+// Initializes the Core, Platform, and System clocks to 48 MHz and the Bus and Flash clocks to 24 MHz. This code is
+// originally from Freescale, but I modified it a bit to make it -- in my opinion -- a bit more readable.
+//----------------------------------------------------------------------------------------------------------------------
+static void bare_clocks_init()
+{
+     928:	b580      	push	{r7, lr}
+     92a:	b082      	sub	sp, #8
+     92c:	af00      	add	r7, sp, #0
+    // value will be 2 and the Bus and Flash clock divider value will be 2. The PLL VCOCLK output will be configured to
+    // 96 MHz, so these dividers will result in the Core, Platform, and System clock freqs to be 48 MHz and the Bus
+    // and Flash clock freqs to be 24 MHz.
+    // SIM_CLKDIV1[OUTDIV1] = 1 (divide value for Core, Platform, and System clocks = 2)
+    // SIM_CLKDIV1[OUTDIV4] = 1 (divide value for Bus and Flash clocks = 2; clock freq will be one-half System clock)
+    SIM_CLKDIV1 = 0x10010000;
+     92e:	4a46      	ldr	r2, [pc, #280]	; (a48 <bare_clocks_init+0x120>)
+     930:	4b46      	ldr	r3, [pc, #280]	; (a4c <bare_clocks_init+0x124>)
+     932:	4947      	ldr	r1, [pc, #284]	; (a50 <bare_clocks_init+0x128>)
+     934:	50d1      	str	r1, [r2, r3]
+    // MCG_SC[ATMS]     = unchanged
+    // MCG_SC[ATF]      = unchanged
+    // MCG_SC[FLTPRSRV] = unchanged
+    // MCG_SC[FRCDIV]   = 0b000 (divide-by-1)
+    // MCG_SC[LOCS0]    = unchanged
+    MCG_SC &= ~(0b111 << 1);
+     936:	4b47      	ldr	r3, [pc, #284]	; (a54 <bare_clocks_init+0x12c>)
+     938:	4a46      	ldr	r2, [pc, #280]	; (a54 <bare_clocks_init+0x12c>)
+     93a:	7a12      	ldrb	r2, [r2, #8]
+     93c:	b2d2      	uxtb	r2, r2
+     93e:	210e      	movs	r1, #14
+     940:	438a      	bics	r2, r1
+     942:	b2d2      	uxtb	r2, r2
+     944:	721a      	strb	r2, [r3, #8]
+    // MCG_C2[RANGE0]  = 0b10 (OSC external clock source is very high range 8-32 MHz)
+    // MCG_C2[HGO0]    = 0 (OSC configured for low power operation)
+    // MCG_C2[EREFS0]  = 1 (external ref clock from OSC = EXTAL is requested)
+    // MCG_C2[LP]      = 0 (FLL or PLL is not disabled in bypass mode)
+    // MCG_C2[IRCS]    = 1 (MCGIRCLK is fast internal ref clock)
+    uint8_t mcg_c2 = MCG_C2;               // mcg_c2 = current value of MCG_C2
+     946:	4a43      	ldr	r2, [pc, #268]	; (a54 <bare_clocks_init+0x12c>)
+     948:	1dfb      	adds	r3, r7, #7
+     94a:	7852      	ldrb	r2, [r2, #1]
+     94c:	701a      	strb	r2, [r3, #0]
+    mcg_c2 &= 0b01000000;                  // Clear all bits except for FCFTRIM, leave it unchanged
+     94e:	1dfb      	adds	r3, r7, #7
+     950:	1dfa      	adds	r2, r7, #7
+     952:	7811      	ldrb	r1, [r2, #0]
+     954:	2240      	movs	r2, #64	; 0x40
+     956:	400a      	ands	r2, r1
+     958:	701a      	strb	r2, [r3, #0]
+    mcg_c2 |= (0b10 << 4) | (1 << 2) | 1;  // Write 0b10 to OSC, 1 to EREFS0, and 1 to MCGIRCLK
+     95a:	1dfb      	adds	r3, r7, #7
+     95c:	1dfa      	adds	r2, r7, #7
+     95e:	7812      	ldrb	r2, [r2, #0]
+     960:	2125      	movs	r1, #37	; 0x25
+     962:	430a      	orrs	r2, r1
+     964:	701a      	strb	r2, [r3, #0]
+    MCG_C2 = mcg_c2;                       // Update MCG_C2
+     966:	4b3b      	ldr	r3, [pc, #236]	; (a54 <bare_clocks_init+0x12c>)
+     968:	1dfa      	adds	r2, r7, #7
+     96a:	7812      	ldrb	r2, [r2, #0]
+     96c:	705a      	strb	r2, [r3, #1]
+
+    // Continuing, configure OSC0_CR.
+    // OSC0_CR[ERCLKEN]  = 1 (enable OSCERCLK)
+    // OSC0_CR[EREFSTEN] = 0 (OSCERCLK is disabled in Stop mode)
+    OSC0_CR = 0b10000000;
+     96e:	4b3a      	ldr	r3, [pc, #232]	; (a58 <bare_clocks_init+0x130>)
+     970:	2280      	movs	r2, #128	; 0x80
+     972:	701a      	strb	r2, [r3, #0]
+    // MCG_C1[CLKS]     = 0b10 (MCGOUTCLK is external ref clock OSCCLK = 8 MHz)
+    // MCG_C1[FRDIV]    = 0b011 = 3 (external ref clock OSCCLK is divided by 256 = 8 MHz / 256 = 31.25 KHz)
+    // MCG_C1[IREFS]    = 0 (FLL clock source is OSCCLK divided by FRDIV)
+    // MCG_C1[IRCLKEN]  = 1 (MCGIRCLK is enabled)
+    // MCG_C1[IREFSTEN] = 0 (internal ref clock is disabled in Stop mode)
+    MCG_C1 = 0b10011010;
+     974:	4b37      	ldr	r3, [pc, #220]	; (a54 <bare_clocks_init+0x12c>)
+     976:	229a      	movs	r2, #154	; 0x9a
+     978:	701a      	strb	r2, [r3, #0]
+    // MCG_C4[FCTRIM]   = 0b1000
+    // MCG_C4[SCFTRIM]  = 0
+    // When DMX32:DRST_DRS = 0b000 = 0, the FLL clock source reference range is [31.25, 39.0625] KHz, the FLL multiplier
+    // factor is 640, and the DCOCLK range is [20, 25] MHz. In our case, since the FLL clock source is 31.25 KHz, the
+    // DCOCLK will be 32.25 KHz x 640 = 20 MHz.
+    uint8_t mcg_c4 = MCG_C4;  // mcg_c4 = current value of MCG_C4
+     97a:	4a36      	ldr	r2, [pc, #216]	; (a54 <bare_clocks_init+0x12c>)
+     97c:	1dbb      	adds	r3, r7, #6
+     97e:	78d2      	ldrb	r2, [r2, #3]
+     980:	701a      	strb	r2, [r3, #0]
+    mcg_c4 &= 0b00011110;     // Clear all bits except for FCTRIM, leave it unchanged
+     982:	1dbb      	adds	r3, r7, #6
+     984:	1dba      	adds	r2, r7, #6
+     986:	7811      	ldrb	r1, [r2, #0]
+     988:	221e      	movs	r2, #30
+     98a:	400a      	ands	r2, r1
+     98c:	701a      	strb	r2, [r3, #0]
+    MCG_C4 = mcg_c4;          // Update MCG_C4
+     98e:	4b31      	ldr	r3, [pc, #196]	; (a54 <bare_clocks_init+0x12c>)
+     990:	1dba      	adds	r2, r7, #6
+     992:	7812      	ldrb	r2, [r2, #0]
+     994:	70da      	strb	r2, [r3, #3]
+    // Continuing, configure MCG_C5.
+    // MCG_C5[reserved] = 0
+    // MCG_C5[PLLCLKEN] = 0 (MCGPLLCLK is inactive)
+    // MCG_C5[PLLSTEN0] = 0 (MCGPLLCLK is disabled in Stop mode)
+    // MCG_C5[PRDIV0]   = 0b00001 (divides the PLL external ref clock OSCCLK by 2; will be 8 MHz / 2 = 4 MHz)
+    MCG_C5 = 0b00000001;
+     996:	4b2f      	ldr	r3, [pc, #188]	; (a54 <bare_clocks_init+0x12c>)
+     998:	2201      	movs	r2, #1
+     99a:	711a      	strb	r2, [r3, #4]
+    // Continuing, configure MCG_C6.
+    // MCG_C6[LOLIE0] = 0 (no irq generated on loss of FLL or PLL lock)
+    // MCG_C6[PLLS]   = 0 (MCGOUTCLK is still external ref clock OSCCLK = 8 MHz)
+    // MCG_C6[CME0]   = 0 (disables clock monitoring for OSC)
+    // MCG_C6[VDIV0]  = 0b00000 (VCOCLK output from PLL is multiplied by 24; it will be 96 MHz)
+    MCG_C6 = 0b00000000;
+     99c:	4b2d      	ldr	r3, [pc, #180]	; (a54 <bare_clocks_init+0x12c>)
+     99e:	2200      	movs	r2, #0
+     9a0:	715a      	strb	r2, [r3, #5]
+
+    // Wait until MCG_S[IREFST] changes to 0 indicating that the source of the FLL ref clock is the external ref
+    // clock OSCCLK). At this time MCGOUTCLK is 8 MHz.
+    while ((MCG_S & 0b00010000) != 0b00000000) {
+     9a2:	46c0      	nop			; (mov r8, r8)
+     9a4:	4b2b      	ldr	r3, [pc, #172]	; (a54 <bare_clocks_init+0x12c>)
+     9a6:	799b      	ldrb	r3, [r3, #6]
+     9a8:	b2db      	uxtb	r3, r3
+     9aa:	1c1a      	adds	r2, r3, #0
+     9ac:	2310      	movs	r3, #16
+     9ae:	4013      	ands	r3, r2
+     9b0:	d1f8      	bne.n	9a4 <bare_clocks_init+0x7c>
+    }
+
+    // Wait until MCG_S[CLKST] changes to 0b10 indicating that MCGOUTCLK is OSCCLK = 8 MHz.
+    while ((MCG_S & 0b00001100) != 0b00001000) {
+     9b2:	46c0      	nop			; (mov r8, r8)
+     9b4:	4b27      	ldr	r3, [pc, #156]	; (a54 <bare_clocks_init+0x12c>)
+     9b6:	799b      	ldrb	r3, [r3, #6]
+     9b8:	b2db      	uxtb	r3, r3
+     9ba:	1c1a      	adds	r2, r3, #0
+     9bc:	230c      	movs	r3, #12
+     9be:	4013      	ands	r3, r2
+     9c0:	2b08      	cmp	r3, #8
+     9c2:	d1f7      	bne.n	9b4 <bare_clocks_init+0x8c>
+    // We are now in FBE mode. Switch to PBE mode by configuring MCG_C6.
+    // MCG_C6[LOLIE0] = 0 (no irq generated on loss of FLL or PLL lock)
+    // MCG_C6[PLLS]   = 1 (MCGOUTCLK is MCGPLLCLK)
+    // MCG_C6[CME0]   = 0 (disables clock monitoring for OSC)
+    // MCG_C6[VDIV0]  = 0b00000 (VCOCLK output from PLL is multiplied by 24; it will be 96 MHz)
+    MCG_C6 = 0b01000000;
+     9c4:	4b23      	ldr	r3, [pc, #140]	; (a54 <bare_clocks_init+0x12c>)
+     9c6:	2240      	movs	r2, #64	; 0x40
+     9c8:	715a      	strb	r2, [r3, #5]
+
+    // Wait until MCG_S[CLKST] changes to 0b10 indicating that MCGOUTCLK is OSCCLK = 8 MHz).
+    while ((MCG_S & 0b00001100) != 0b00001000) {
+     9ca:	46c0      	nop			; (mov r8, r8)
+     9cc:	4b21      	ldr	r3, [pc, #132]	; (a54 <bare_clocks_init+0x12c>)
+     9ce:	799b      	ldrb	r3, [r3, #6]
+     9d0:	b2db      	uxtb	r3, r3
+     9d2:	1c1a      	adds	r2, r3, #0
+     9d4:	230c      	movs	r3, #12
+     9d6:	4013      	ands	r3, r2
+     9d8:	2b08      	cmp	r3, #8
+     9da:	d1f7      	bne.n	9cc <bare_clocks_init+0xa4>
+    }
+
+    // Wait until MCG_S[LOCK0] changes to 1 indicating that the PLL has locked onto its ref clock.
+    while ((MCG_S & 0b01000000) == 0b00000000) {
+     9dc:	46c0      	nop			; (mov r8, r8)
+     9de:	4b1d      	ldr	r3, [pc, #116]	; (a54 <bare_clocks_init+0x12c>)
+     9e0:	799b      	ldrb	r3, [r3, #6]
+     9e2:	b2db      	uxtb	r3, r3
+     9e4:	1c1a      	adds	r2, r3, #0
+     9e6:	2340      	movs	r3, #64	; 0x40
+     9e8:	4013      	ands	r3, r2
+     9ea:	d0f8      	beq.n	9de <bare_clocks_init+0xb6>
+    // MCG_C1[CLKS]     = 0b00 (MCGOUTCLK is MCGPLLCLK which is VCOCLK / 2 = 96 MHz / 2 = 48 MHz)
+    // MCG_C1[FRDIV]    = 0b011 = 3 (do not change)
+    // MCG_C1[IREFS]    = 0 (do not change)
+    // MCG_C1[IRCLKEN]  = 1 (MCGIRCLK is enabled)
+    // MCG_C1[IREFSTEN] = 0 (internal ref clock is disabled in Stop mode)
+    MCG_C1 = 0b00011010;
+     9ec:	4b19      	ldr	r3, [pc, #100]	; (a54 <bare_clocks_init+0x12c>)
+     9ee:	221a      	movs	r2, #26
+     9f0:	701a      	strb	r2, [r3, #0]
+
+    // Wait until MCG_S[CLKST] changes to 0b11 indicating that MCGOUTCLK = MCGPLLCLK = 48 MHz).
+    while ((MCG_S & 0b00001100) != 0b00001100) {
+     9f2:	46c0      	nop			; (mov r8, r8)
+     9f4:	4b17      	ldr	r3, [pc, #92]	; (a54 <bare_clocks_init+0x12c>)
+     9f6:	799b      	ldrb	r3, [r3, #6]
+     9f8:	b2db      	uxtb	r3, r3
+     9fa:	1c1a      	adds	r2, r3, #0
+     9fc:	230c      	movs	r3, #12
+     9fe:	4013      	ands	r3, r2
+     a00:	2b0c      	cmp	r3, #12
+     a02:	d1f7      	bne.n	9f4 <bare_clocks_init+0xcc>
+    }
+
+    // Set global variables. These are defined in global.c and declared in global.h.
+    global_core_clock_freq_mhz     = 48;
+     a04:	4b15      	ldr	r3, [pc, #84]	; (a5c <bare_clocks_init+0x134>)
+     a06:	2230      	movs	r2, #48	; 0x30
+     a08:	601a      	str	r2, [r3, #0]
+    global_platform_clock_freq_mhz = 48;
+     a0a:	4b15      	ldr	r3, [pc, #84]	; (a60 <bare_clocks_init+0x138>)
+     a0c:	2230      	movs	r2, #48	; 0x30
+     a0e:	601a      	str	r2, [r3, #0]
+    global_system_clock_freq_mhz   = 48;
+     a10:	4b14      	ldr	r3, [pc, #80]	; (a64 <bare_clocks_init+0x13c>)
+     a12:	2230      	movs	r2, #48	; 0x30
+     a14:	601a      	str	r2, [r3, #0]
+    global_bus_clock_freq_mhz      = 24;
+     a16:	4b14      	ldr	r3, [pc, #80]	; (a68 <bare_clocks_init+0x140>)
+     a18:	2218      	movs	r2, #24
+     a1a:	601a      	str	r2, [r3, #0]
+    global_flash_clock_freq_mhz    = 24;
+     a1c:	4b13      	ldr	r3, [pc, #76]	; (a6c <bare_clocks_init+0x144>)
+     a1e:	2218      	movs	r2, #24
+     a20:	601a      	str	r2, [r3, #0]
+    global_oscerclk_freq_mhz       = 8;
+     a22:	4b13      	ldr	r3, [pc, #76]	; (a70 <bare_clocks_init+0x148>)
+     a24:	2208      	movs	r2, #8
+     a26:	601a      	str	r2, [r3, #0]
+    global_mcgirclk_freq_mhz       = 4;  // Note that MCGIRCLK is the fast internal reference clock = 4 MHz
+     a28:	4b12      	ldr	r3, [pc, #72]	; (a74 <bare_clocks_init+0x14c>)
+     a2a:	2204      	movs	r2, #4
+     a2c:	601a      	str	r2, [r3, #0]
+
+    // Select MCGPLLCLK/2 to be the clock source for some peripherals.
+    SIM_SOPT2 |= 1 << 16;
+     a2e:	4a06      	ldr	r2, [pc, #24]	; (a48 <bare_clocks_init+0x120>)
+     a30:	4905      	ldr	r1, [pc, #20]	; (a48 <bare_clocks_init+0x120>)
+     a32:	4b11      	ldr	r3, [pc, #68]	; (a78 <bare_clocks_init+0x150>)
+     a34:	58cb      	ldr	r3, [r1, r3]
+     a36:	2180      	movs	r1, #128	; 0x80
+     a38:	0249      	lsls	r1, r1, #9
+     a3a:	4319      	orrs	r1, r3
+     a3c:	4b0e      	ldr	r3, [pc, #56]	; (a78 <bare_clocks_init+0x150>)
+     a3e:	50d1      	str	r1, [r2, r3]
+
+    #ifdef CLKOUT_ENABLE
+        // Enable the CLKOUT pin to be the Bus clock. Note that this disables use of PTC3.
+       bare_clkout_init();
+    #endif
+}
+     a40:	46bd      	mov	sp, r7
+     a42:	b002      	add	sp, #8
+     a44:	bd80      	pop	{r7, pc}
+     a46:	46c0      	nop			; (mov r8, r8)
+     a48:	40047000 	.word	0x40047000
+     a4c:	00001044 	.word	0x00001044
+     a50:	10010000 	.word	0x10010000
+     a54:	40064000 	.word	0x40064000
+     a58:	40065000 	.word	0x40065000
+     a5c:	1fffe09c 	.word	0x1fffe09c
+     a60:	1fffe0a8 	.word	0x1fffe0a8
+     a64:	1fffe0b0 	.word	0x1fffe0b0
+     a68:	1fffe098 	.word	0x1fffe098
+     a6c:	1fffe0a0 	.word	0x1fffe0a0
+     a70:	1fffe0ac 	.word	0x1fffe0ac
+     a74:	1fffe0a4 	.word	0x1fffe0a4
+     a78:	00001004 	.word	0x00001004
+
+00000a7c <bare_copy_rom_sections_to_ram>:
+// This function copies all sections marked as ROM in the .elf file to their target addresses in SRAM. __romp is
+// defined in the linker script as a 1D array where each element is a structure of type bare_rom_table_t. The end of
+// the ROM entries is specified by a structure with all 0's for each of the fields.
+//----------------------------------------------------------------------------------------------------------------------
+void bare_copy_rom_sections_to_ram()
+{
+     a7c:	b590      	push	{r4, r7, lr}
+     a7e:	b083      	sub	sp, #12
+     a80:	af00      	add	r7, sp, #0
+    // If there are no ROM sections to copy then return.
+    if (__romp == 0L) return;
+
+    // Iterate over table entry, copying the section from ROM to SRAM.
+    for (int i = 0; __romp[i].m_source != 0L; ++i) {
+     a82:	2300      	movs	r3, #0
+     a84:	607b      	str	r3, [r7, #4]
+     a86:	e01e      	b.n	ac6 <bare_copy_rom_sections_to_ram+0x4a>
+        cse325_memcpy(__romp[i].m_target, __romp[i].m_source, __romp[i].m_size);
+     a88:	4915      	ldr	r1, [pc, #84]	; (ae0 <bare_copy_rom_sections_to_ram+0x64>)
+     a8a:	687a      	ldr	r2, [r7, #4]
+     a8c:	1c13      	adds	r3, r2, #0
+     a8e:	005b      	lsls	r3, r3, #1
+     a90:	189b      	adds	r3, r3, r2
+     a92:	009b      	lsls	r3, r3, #2
+     a94:	18cb      	adds	r3, r1, r3
+     a96:	3304      	adds	r3, #4
+     a98:	6818      	ldr	r0, [r3, #0]
+     a9a:	4911      	ldr	r1, [pc, #68]	; (ae0 <bare_copy_rom_sections_to_ram+0x64>)
+     a9c:	687a      	ldr	r2, [r7, #4]
+     a9e:	1c13      	adds	r3, r2, #0
+     aa0:	005b      	lsls	r3, r3, #1
+     aa2:	189b      	adds	r3, r3, r2
+     aa4:	009b      	lsls	r3, r3, #2
+     aa6:	5859      	ldr	r1, [r3, r1]
+     aa8:	4c0d      	ldr	r4, [pc, #52]	; (ae0 <bare_copy_rom_sections_to_ram+0x64>)
+     aaa:	687a      	ldr	r2, [r7, #4]
+     aac:	1c13      	adds	r3, r2, #0
+     aae:	005b      	lsls	r3, r3, #1
+     ab0:	189b      	adds	r3, r3, r2
+     ab2:	009b      	lsls	r3, r3, #2
+     ab4:	18e3      	adds	r3, r4, r3
+     ab6:	3308      	adds	r3, #8
+     ab8:	681b      	ldr	r3, [r3, #0]
+     aba:	1c1a      	adds	r2, r3, #0
+     abc:	f7ff fede 	bl	87c <cse325_memcpy>
+{
+    // If there are no ROM sections to copy then return.
+    if (__romp == 0L) return;
+
+    // Iterate over table entry, copying the section from ROM to SRAM.
+    for (int i = 0; __romp[i].m_source != 0L; ++i) {
+     ac0:	687b      	ldr	r3, [r7, #4]
+     ac2:	3301      	adds	r3, #1
+     ac4:	607b      	str	r3, [r7, #4]
+     ac6:	4906      	ldr	r1, [pc, #24]	; (ae0 <bare_copy_rom_sections_to_ram+0x64>)
+     ac8:	687a      	ldr	r2, [r7, #4]
+     aca:	1c13      	adds	r3, r2, #0
+     acc:	005b      	lsls	r3, r3, #1
+     ace:	189b      	adds	r3, r3, r2
+     ad0:	009b      	lsls	r3, r3, #2
+     ad2:	585b      	ldr	r3, [r3, r1]
+     ad4:	2b00      	cmp	r3, #0
+     ad6:	d1d7      	bne.n	a88 <bare_copy_rom_sections_to_ram+0xc>
+        cse325_memcpy(__romp[i].m_target, __romp[i].m_source, __romp[i].m_size);
+    }
+}
+     ad8:	46bd      	mov	sp, r7
+     ada:	b003      	add	sp, #12
+     adc:	bd90      	pop	{r4, r7, pc}
+     ade:	46c0      	nop			; (mov r8, r8)
+     ae0:	000016d4 	.word	0x000016d4
+
+00000ae4 <bare_default_isr>:
+// DESCRIPTION
+// Default interrupt service routine. All interrupt vectors direct here unless changed by writing a new address for the
+// ISR to the vector table. This function simply executes an ARM breakpoint instruction, which causes execution to halt.
+//----------------------------------------------------------------------------------------------------------------------
+void bare_default_isr()
+{
+     ae4:	b580      	push	{r7, lr}
+     ae6:	af00      	add	r7, sp, #0
+    __asm("bkpt");
+     ae8:	be00      	bkpt	0x0000
+}
+     aea:	46bd      	mov	sp, r7
+     aec:	bd80      	pop	{r7, pc}
+     aee:	46c0      	nop			; (mov r8, r8)
+
+00000af0 <bare_hardfault_isr>:
+//
+// REMARKS
+// When bkpt is reached, the address of the instruction which generated the hardfault can be found at Mem[SP + 32].
+//----------------------------------------------------------------------------------------------------------------------
+void bare_hardfault_isr()
+{
+     af0:	b580      	push	{r7, lr}
+     af2:	af00      	add	r7, sp, #0
+    __asm("bkpt");
+     af4:	be00      	bkpt	0x0000
+}
+     af6:	46bd      	mov	sp, r7
+     af8:	bd80      	pop	{r7, pc}
+     afa:	46c0      	nop			; (mov r8, r8)
+
+00000afc <bare_hw_init>:
+//
+// DESCRIPTION
+// Called by bare_startup. Initializes SCB_VTOR and SIM_COPC.
+//----------------------------------------------------------------------------------------------------------------------
+void bare_hw_init()
+{
+     afc:	b580      	push	{r7, lr}
+     afe:	af00      	add	r7, sp, #0
+    // Write the address of the exception vector table to SCB_VTOR.
+    SCB_VTOR = (uint32_t)__vector_table;
+     b00:	4a06      	ldr	r2, [pc, #24]	; (b1c <bare_hw_init+0x20>)
+     b02:	4907      	ldr	r1, [pc, #28]	; (b20 <bare_hw_init+0x24>)
+     b04:	4b07      	ldr	r3, [pc, #28]	; (b24 <bare_hw_init+0x28>)
+     b06:	50d1      	str	r1, [r2, r3]
+
+    // Disable the watchdog because it may reset the core before entering main().
+    SIM_COPC = 0x00000000;
+     b08:	4a07      	ldr	r2, [pc, #28]	; (b28 <bare_hw_init+0x2c>)
+     b0a:	2388      	movs	r3, #136	; 0x88
+     b0c:	015b      	lsls	r3, r3, #5
+     b0e:	2100      	movs	r1, #0
+     b10:	50d1      	str	r1, [r2, r3]
+
+    // Initialize the Core, Platform, System, Bus, and Flash clocks.
+    bare_clocks_init();
+     b12:	f7ff ff09 	bl	928 <bare_clocks_init>
+}
+     b16:	46bd      	mov	sp, r7
+     b18:	bd80      	pop	{r7, pc}
+     b1a:	46c0      	nop			; (mov r8, r8)
+     b1c:	e000e000 	.word	0xe000e000
+     b20:	00000000 	.word	0x00000000
+     b24:	00000d08 	.word	0x00000d08
+     b28:	40047000 	.word	0x40047000
+
+00000b2c <systick_cfg_callback>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: systick_cfg_callback()
+//----------------------------------------------------------------------------------------------------------------------
+void systick_cfg_callback(callback_vu32_t p_callback)
+{
+     b2c:	b580      	push	{r7, lr}
+     b2e:	b082      	sub	sp, #8
+     b30:	af00      	add	r7, sp, #0
+     b32:	6078      	str	r0, [r7, #4]
+    g_callback = p_callback;
+     b34:	4b02      	ldr	r3, [pc, #8]	; (b40 <systick_cfg_callback+0x14>)
+     b36:	687a      	ldr	r2, [r7, #4]
+     b38:	601a      	str	r2, [r3, #0]
+}
+     b3a:	46bd      	mov	sp, r7
+     b3c:	b002      	add	sp, #8
+     b3e:	bd80      	pop	{r7, pc}
+     b40:	1fffe004 	.word	0x1fffe004
+
+00000b44 <systick_cfg_clk_src>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: systick_cfg_clk_src()
+//----------------------------------------------------------------------------------------------------------------------
+void systick_cfg_clk_src(systick_clk_src_t p_clk_src)
+{
+     b44:	b580      	push	{r7, lr}
+     b46:	b082      	sub	sp, #8
+     b48:	af00      	add	r7, sp, #0
+     b4a:	1c02      	adds	r2, r0, #0
+     b4c:	1dfb      	adds	r3, r7, #7
+     b4e:	701a      	strb	r2, [r3, #0]
+    if (p_clk_src == systick_clk_src_external) {
+     b50:	1dfb      	adds	r3, r7, #7
+     b52:	781b      	ldrb	r3, [r3, #0]
+     b54:	2b00      	cmp	r3, #0
+     b56:	d106      	bne.n	b66 <systick_cfg_clk_src+0x22>
+        SYST_CSR &= ~(1 << SYST_CSR_CLKSOURCE_SHIFT);
+     b58:	4b07      	ldr	r3, [pc, #28]	; (b78 <systick_cfg_clk_src+0x34>)
+     b5a:	4a07      	ldr	r2, [pc, #28]	; (b78 <systick_cfg_clk_src+0x34>)
+     b5c:	6812      	ldr	r2, [r2, #0]
+     b5e:	2104      	movs	r1, #4
+     b60:	438a      	bics	r2, r1
+     b62:	601a      	str	r2, [r3, #0]
+     b64:	e005      	b.n	b72 <systick_cfg_clk_src+0x2e>
+    } else {
+        SYST_CSR |= 1 << SYST_CSR_CLKSOURCE_SHIFT;
+     b66:	4b04      	ldr	r3, [pc, #16]	; (b78 <systick_cfg_clk_src+0x34>)
+     b68:	4a03      	ldr	r2, [pc, #12]	; (b78 <systick_cfg_clk_src+0x34>)
+     b6a:	6812      	ldr	r2, [r2, #0]
+     b6c:	2104      	movs	r1, #4
+     b6e:	430a      	orrs	r2, r1
+     b70:	601a      	str	r2, [r3, #0]
+    }
+}
+     b72:	46bd      	mov	sp, r7
+     b74:	b002      	add	sp, #8
+     b76:	bd80      	pop	{r7, pc}
+     b78:	e000e010 	.word	0xe000e010
+
+00000b7c <systick_cfg_int_state>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: systick_cfg_int_state()
+//----------------------------------------------------------------------------------------------------------------------
+void systick_cfg_int_state(systick_int_t p_int)
+{
+     b7c:	b580      	push	{r7, lr}
+     b7e:	b082      	sub	sp, #8
+     b80:	af00      	add	r7, sp, #0
+     b82:	1c02      	adds	r2, r0, #0
+     b84:	1dfb      	adds	r3, r7, #7
+     b86:	701a      	strb	r2, [r3, #0]
+    if (p_int == systick_int_disabled) {
+     b88:	1dfb      	adds	r3, r7, #7
+     b8a:	781b      	ldrb	r3, [r3, #0]
+     b8c:	2b00      	cmp	r3, #0
+     b8e:	d106      	bne.n	b9e <systick_cfg_int_state+0x22>
+        SYST_CSR &= ~(1 << SYST_CSR_TICKINT_SHIFT);
+     b90:	4b07      	ldr	r3, [pc, #28]	; (bb0 <systick_cfg_int_state+0x34>)
+     b92:	4a07      	ldr	r2, [pc, #28]	; (bb0 <systick_cfg_int_state+0x34>)
+     b94:	6812      	ldr	r2, [r2, #0]
+     b96:	2102      	movs	r1, #2
+     b98:	438a      	bics	r2, r1
+     b9a:	601a      	str	r2, [r3, #0]
+     b9c:	e005      	b.n	baa <systick_cfg_int_state+0x2e>
+    } else {
+        SYST_CSR |= 1 << SYST_CSR_TICKINT_SHIFT;
+     b9e:	4b04      	ldr	r3, [pc, #16]	; (bb0 <systick_cfg_int_state+0x34>)
+     ba0:	4a03      	ldr	r2, [pc, #12]	; (bb0 <systick_cfg_int_state+0x34>)
+     ba2:	6812      	ldr	r2, [r2, #0]
+     ba4:	2102      	movs	r1, #2
+     ba6:	430a      	orrs	r2, r1
+     ba8:	601a      	str	r2, [r3, #0]
+    }
+}
+     baa:	46bd      	mov	sp, r7
+     bac:	b002      	add	sp, #8
+     bae:	bd80      	pop	{r7, pc}
+     bb0:	e000e010 	.word	0xe000e010
+
+00000bb4 <systick_cfg_state>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: systick_cfg_state()
+//----------------------------------------------------------------------------------------------------------------------
+void systick_cfg_state(systick_state_t p_state)
+{
+     bb4:	b580      	push	{r7, lr}
+     bb6:	b082      	sub	sp, #8
+     bb8:	af00      	add	r7, sp, #0
+     bba:	1c02      	adds	r2, r0, #0
+     bbc:	1dfb      	adds	r3, r7, #7
+     bbe:	701a      	strb	r2, [r3, #0]
+    if (p_state == systick_state_disabled) {
+     bc0:	1dfb      	adds	r3, r7, #7
+     bc2:	781b      	ldrb	r3, [r3, #0]
+     bc4:	2b00      	cmp	r3, #0
+     bc6:	d106      	bne.n	bd6 <systick_cfg_state+0x22>
+        SYST_CSR &= ~(1 << SYST_CSR_ENABLE_SHIFT);
+     bc8:	4b07      	ldr	r3, [pc, #28]	; (be8 <systick_cfg_state+0x34>)
+     bca:	4a07      	ldr	r2, [pc, #28]	; (be8 <systick_cfg_state+0x34>)
+     bcc:	6812      	ldr	r2, [r2, #0]
+     bce:	2101      	movs	r1, #1
+     bd0:	438a      	bics	r2, r1
+     bd2:	601a      	str	r2, [r3, #0]
+     bd4:	e005      	b.n	be2 <systick_cfg_state+0x2e>
+    } else {
+        SYST_CSR |= 1 << SYST_CSR_ENABLE_SHIFT;
+     bd6:	4b04      	ldr	r3, [pc, #16]	; (be8 <systick_cfg_state+0x34>)
+     bd8:	4a03      	ldr	r2, [pc, #12]	; (be8 <systick_cfg_state+0x34>)
+     bda:	6812      	ldr	r2, [r2, #0]
+     bdc:	2101      	movs	r1, #1
+     bde:	430a      	orrs	r2, r1
+     be0:	601a      	str	r2, [r3, #0]
+    }
+}
+     be2:	46bd      	mov	sp, r7
+     be4:	b002      	add	sp, #8
+     be6:	bd80      	pop	{r7, pc}
+     be8:	e000e010 	.word	0xe000e010
+
+00000bec <systick_init>:
+// NOTE
+// The SysTick exception number is 15 (IRQ -1) and has priority 0 by default, which we do not change. This makes it the
+// highest priority interrupt in the system (although there are a few exceptions which have higher priority).
+//----------------------------------------------------------------------------------------------------------------------
+void systick_init(systick_period_isr_t p_period, systick_int_t p_int, systick_state_t p_state, callback_vu32_t p_callback)
+{
+     bec:	b580      	push	{r7, lr}
+     bee:	b084      	sub	sp, #16
+     bf0:	af00      	add	r7, sp, #0
+     bf2:	60f8      	str	r0, [r7, #12]
+     bf4:	607b      	str	r3, [r7, #4]
+     bf6:	1c3b      	adds	r3, r7, #0
+     bf8:	330b      	adds	r3, #11
+     bfa:	7019      	strb	r1, [r3, #0]
+     bfc:	1c3b      	adds	r3, r7, #0
+     bfe:	330a      	adds	r3, #10
+     c00:	701a      	strb	r2, [r3, #0]
+    // Disable the SysTick counter during initialization.
+    systick_cfg_state(systick_state_disabled);
+     c02:	2000      	movs	r0, #0
+     c04:	f7ff ffd6 	bl	bb4 <systick_cfg_state>
+
+    // Select the platform clock as the clock source.
+    systick_cfg_clk_src(systick_clk_src_platform);
+     c08:	2001      	movs	r0, #1
+     c0a:	f7ff ff9b 	bl	b44 <systick_cfg_clk_src>
+
+    // Reset SysTick. This will: (1) stop the counter; (2) load SYST_RVR with p_period; (3) reset SYST_CVR to 0;
+    // (4) enable or disable the counter; and (5) configure the callback function.
+    systick_reset(p_period, p_state, p_callback);
+     c0e:	68f9      	ldr	r1, [r7, #12]
+     c10:	1c3b      	adds	r3, r7, #0
+     c12:	330a      	adds	r3, #10
+     c14:	781a      	ldrb	r2, [r3, #0]
+     c16:	687b      	ldr	r3, [r7, #4]
+     c18:	1c08      	adds	r0, r1, #0
+     c1a:	1c11      	adds	r1, r2, #0
+     c1c:	1c1a      	adds	r2, r3, #0
+     c1e:	f000 f821 	bl	c64 <systick_reset>
+
+    // Enable or disable interrupts based on the value of p_int.
+    systick_cfg_int_state(p_int);
+     c22:	1c3b      	adds	r3, r7, #0
+     c24:	330b      	adds	r3, #11
+     c26:	781b      	ldrb	r3, [r3, #0]
+     c28:	1c18      	adds	r0, r3, #0
+     c2a:	f7ff ffa7 	bl	b7c <systick_cfg_int_state>
+
+    // Configure the disabled/enabled state of the timer to p_state. If p_state is systick_state_enabled, the counter
+    // will begin counting now.
+    systick_cfg_state(p_state);
+     c2e:	1c3b      	adds	r3, r7, #0
+     c30:	330a      	adds	r3, #10
+     c32:	781b      	ldrb	r3, [r3, #0]
+     c34:	1c18      	adds	r0, r3, #0
+     c36:	f7ff ffbd 	bl	bb4 <systick_cfg_state>
+}
+     c3a:	46bd      	mov	sp, r7
+     c3c:	b004      	add	sp, #16
+     c3e:	bd80      	pop	{r7, pc}
+
+00000c40 <systick_isr>:
+//
+// NOTE
+// The SysTick interrupt request flag is automatically cleared.
+//----------------------------------------------------------------------------------------------------------------------
+void systick_isr()
+{
+     c40:	b580      	push	{r7, lr}
+     c42:	af00      	add	r7, sp, #0
+    // If requested, call the users callback function, passing the current value of the SysTick counter.
+    if (g_callback) {
+     c44:	4b05      	ldr	r3, [pc, #20]	; (c5c <systick_isr+0x1c>)
+     c46:	681b      	ldr	r3, [r3, #0]
+     c48:	2b00      	cmp	r3, #0
+     c4a:	d005      	beq.n	c58 <systick_isr+0x18>
+        g_callback(SYST_CVR);
+     c4c:	4b03      	ldr	r3, [pc, #12]	; (c5c <systick_isr+0x1c>)
+     c4e:	681a      	ldr	r2, [r3, #0]
+     c50:	4b03      	ldr	r3, [pc, #12]	; (c60 <systick_isr+0x20>)
+     c52:	689b      	ldr	r3, [r3, #8]
+     c54:	1c18      	adds	r0, r3, #0
+     c56:	4790      	blx	r2
+    }
+}
+     c58:	46bd      	mov	sp, r7
+     c5a:	bd80      	pop	{r7, pc}
+     c5c:	1fffe004 	.word	0x1fffe004
+     c60:	e000e010 	.word	0xe000e010
+
+00000c64 <systick_reset>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: systick_reset()
+//----------------------------------------------------------------------------------------------------------------------
+void systick_reset(systick_period_isr_t p_period, systick_state_t p_state, callback_vu32_t p_callback)
+{
+     c64:	b580      	push	{r7, lr}
+     c66:	b084      	sub	sp, #16
+     c68:	af00      	add	r7, sp, #0
+     c6a:	60f8      	str	r0, [r7, #12]
+     c6c:	607a      	str	r2, [r7, #4]
+     c6e:	1c3b      	adds	r3, r7, #0
+     c70:	330b      	adds	r3, #11
+     c72:	1c0a      	adds	r2, r1, #0
+     c74:	701a      	strb	r2, [r3, #0]
+    // Stop the counter.
+    systick_cfg_state(systick_state_disabled);
+     c76:	2000      	movs	r0, #0
+     c78:	f7ff ff9c 	bl	bb4 <systick_cfg_state>
+
+    // Load SYST_RVR[RELOAD] with the proper value such that the desired SysTick ISR period will be obtained.
+    SYST_RVR = p_period;
+     c7c:	4b09      	ldr	r3, [pc, #36]	; (ca4 <systick_reset+0x40>)
+     c7e:	68fa      	ldr	r2, [r7, #12]
+     c80:	605a      	str	r2, [r3, #4]
+
+    // Writing any value to SYST_CVR will clear the counter to 0. On the first clock after the counter is enabled to
+    // begin counting, it will be loaded with SYST_RVR[RELOAD]. Thus, there will be exactly SYST_RVR[RELOAD] clock ticks
+    // before the SysTick exception is generated (when the counter reaches 0).
+    SYST_CVR = 0;
+     c82:	4b08      	ldr	r3, [pc, #32]	; (ca4 <systick_reset+0x40>)
+     c84:	2200      	movs	r2, #0
+     c86:	609a      	str	r2, [r3, #8]
+
+    // Configure the callback request.
+    systick_cfg_callback(p_callback);
+     c88:	687b      	ldr	r3, [r7, #4]
+     c8a:	1c18      	adds	r0, r3, #0
+     c8c:	f7ff ff4e 	bl	b2c <systick_cfg_callback>
+
+    // Configure the disabled/enabled state of the timer to p_state.
+    systick_cfg_state(p_state);
+     c90:	1c3b      	adds	r3, r7, #0
+     c92:	330b      	adds	r3, #11
+     c94:	781b      	ldrb	r3, [r3, #0]
+     c96:	1c18      	adds	r0, r3, #0
+     c98:	f7ff ff8c 	bl	bb4 <systick_cfg_state>
+}
+     c9c:	46bd      	mov	sp, r7
+     c9e:	b004      	add	sp, #16
+     ca0:	bd80      	pop	{r7, pc}
+     ca2:	46c0      	nop			; (mov r8, r8)
+     ca4:	e000e010 	.word	0xe000e010
+
+00000ca8 <systick_callback>:
+
+static uint32_t	scanner_pos = 0;
+static uint32_t	systick_counter = 0;
+
+void systick_callback(uint32_t p_count __attribute__((unused)))
+{
+     ca8:	b580      	push	{r7, lr}
+     caa:	b082      	sub	sp, #8
+     cac:	af00      	add	r7, sp, #0
+     cae:	6078      	str	r0, [r7, #4]
+	SYST_CSR;
+     cb0:	4b0d      	ldr	r3, [pc, #52]	; (ce8 <systick_callback+0x40>)
+     cb2:	681b      	ldr	r3, [r3, #0]
+	systick_counter++;
+     cb4:	4b0d      	ldr	r3, [pc, #52]	; (cec <systick_callback+0x44>)
+     cb6:	681b      	ldr	r3, [r3, #0]
+     cb8:	1c5a      	adds	r2, r3, #1
+     cba:	4b0c      	ldr	r3, [pc, #48]	; (cec <systick_callback+0x44>)
+     cbc:	601a      	str	r2, [r3, #0]
+	
+	if(systick_counter >= (current_period_ms/25))
+     cbe:	4b0c      	ldr	r3, [pc, #48]	; (cf0 <systick_callback+0x48>)
+     cc0:	681b      	ldr	r3, [r3, #0]
+     cc2:	1c18      	adds	r0, r3, #0
+     cc4:	2119      	movs	r1, #25
+     cc6:	f7ff fd9b 	bl	800 <__aeabi_uidiv>
+     cca:	1c03      	adds	r3, r0, #0
+     ccc:	1c1a      	adds	r2, r3, #0
+     cce:	4b07      	ldr	r3, [pc, #28]	; (cec <systick_callback+0x44>)
+     cd0:	681b      	ldr	r3, [r3, #0]
+     cd2:	429a      	cmp	r2, r3
+     cd4:	d804      	bhi.n	ce0 <systick_callback+0x38>
+	{
+		systick_counter = 0;
+     cd6:	4b05      	ldr	r3, [pc, #20]	; (cec <systick_callback+0x44>)
+     cd8:	2200      	movs	r2, #0
+     cda:	601a      	str	r2, [r3, #0]
+		scanner_next();
+     cdc:	f000 f80a 	bl	cf4 <scanner_next>
+	}
+}
+     ce0:	46bd      	mov	sp, r7
+     ce2:	b002      	add	sp, #8
+     ce4:	bd80      	pop	{r7, pc}
+     ce6:	46c0      	nop			; (mov r8, r8)
+     ce8:	e000e010 	.word	0xe000e010
+     cec:	1fffe010 	.word	0x1fffe010
+     cf0:	1fffe000 	.word	0x1fffe000
+
+00000cf4 <scanner_next>:
+
+void scanner_next()
+{
+     cf4:	b580      	push	{r7, lr}
+     cf6:	af00      	add	r7, sp, #0
+	if(scanner_dir == scanner_up)
+     cf8:	4b1c      	ldr	r3, [pc, #112]	; (d6c <scanner_next+0x78>)
+     cfa:	781b      	ldrb	r3, [r3, #0]
+     cfc:	2b00      	cmp	r3, #0
+     cfe:	d112      	bne.n	d26 <scanner_next+0x32>
+	{
+		if(scanner_pos == 9)
+     d00:	4b1b      	ldr	r3, [pc, #108]	; (d70 <scanner_next+0x7c>)
+     d02:	681b      	ldr	r3, [r3, #0]
+     d04:	2b09      	cmp	r3, #9
+     d06:	d108      	bne.n	d1a <scanner_next+0x26>
+		{
+			scanner_dir = scanner_down;
+     d08:	4b18      	ldr	r3, [pc, #96]	; (d6c <scanner_next+0x78>)
+     d0a:	2201      	movs	r2, #1
+     d0c:	701a      	strb	r2, [r3, #0]
+			scanner_pos--;
+     d0e:	4b18      	ldr	r3, [pc, #96]	; (d70 <scanner_next+0x7c>)
+     d10:	681b      	ldr	r3, [r3, #0]
+     d12:	1e5a      	subs	r2, r3, #1
+     d14:	4b16      	ldr	r3, [pc, #88]	; (d70 <scanner_next+0x7c>)
+     d16:	601a      	str	r2, [r3, #0]
+     d18:	e017      	b.n	d4a <scanner_next+0x56>
+		}
+		else
+		{
+			scanner_pos++;
+     d1a:	4b15      	ldr	r3, [pc, #84]	; (d70 <scanner_next+0x7c>)
+     d1c:	681b      	ldr	r3, [r3, #0]
+     d1e:	1c5a      	adds	r2, r3, #1
+     d20:	4b13      	ldr	r3, [pc, #76]	; (d70 <scanner_next+0x7c>)
+     d22:	601a      	str	r2, [r3, #0]
+     d24:	e011      	b.n	d4a <scanner_next+0x56>
+		}
+	}
+	
+	else
+	{
+		if(scanner_pos == 0)
+     d26:	4b12      	ldr	r3, [pc, #72]	; (d70 <scanner_next+0x7c>)
+     d28:	681b      	ldr	r3, [r3, #0]
+     d2a:	2b00      	cmp	r3, #0
+     d2c:	d108      	bne.n	d40 <scanner_next+0x4c>
+		{
+			scanner_dir = scanner_up;
+     d2e:	4b0f      	ldr	r3, [pc, #60]	; (d6c <scanner_next+0x78>)
+     d30:	2200      	movs	r2, #0
+     d32:	701a      	strb	r2, [r3, #0]
+			scanner_pos++;
+     d34:	4b0e      	ldr	r3, [pc, #56]	; (d70 <scanner_next+0x7c>)
+     d36:	681b      	ldr	r3, [r3, #0]
+     d38:	1c5a      	adds	r2, r3, #1
+     d3a:	4b0d      	ldr	r3, [pc, #52]	; (d70 <scanner_next+0x7c>)
+     d3c:	601a      	str	r2, [r3, #0]
+     d3e:	e004      	b.n	d4a <scanner_next+0x56>
+		}
+		else
+		{
+			scanner_pos--;
+     d40:	4b0b      	ldr	r3, [pc, #44]	; (d70 <scanner_next+0x7c>)
+     d42:	681b      	ldr	r3, [r3, #0]
+     d44:	1e5a      	subs	r2, r3, #1
+     d46:	4b0a      	ldr	r3, [pc, #40]	; (d70 <scanner_next+0x7c>)
+     d48:	601a      	str	r2, [r3, #0]
+		}
+	}
+	
+	led_all_off(led_logic, 10);
+     d4a:	4b0a      	ldr	r3, [pc, #40]	; (d74 <scanner_next+0x80>)
+     d4c:	781b      	ldrb	r3, [r3, #0]
+     d4e:	1c18      	adds	r0, r3, #0
+     d50:	210a      	movs	r1, #10
+     d52:	f000 fb2d 	bl	13b0 <led_all_off>
+	led_on(led_logic, scanner_pos);
+     d56:	4b07      	ldr	r3, [pc, #28]	; (d74 <scanner_next+0x80>)
+     d58:	781a      	ldrb	r2, [r3, #0]
+     d5a:	4b05      	ldr	r3, [pc, #20]	; (d70 <scanner_next+0x7c>)
+     d5c:	681b      	ldr	r3, [r3, #0]
+     d5e:	1c10      	adds	r0, r2, #0
+     d60:	1c19      	adds	r1, r3, #0
+     d62:	f000 f999 	bl	1098 <led_on>
+}
+     d66:	46bd      	mov	sp, r7
+     d68:	bd80      	pop	{r7, pc}
+     d6a:	46c0      	nop			; (mov r8, r8)
+     d6c:	1fffe008 	.word	0x1fffe008
+     d70:	1fffe00c 	.word	0x1fffe00c
+     d74:	1fffe009 	.word	0x1fffe009
+
+00000d78 <pushb_init>:
+
+static bool_t pb2_pressed = false;
+uint32_t current_period_ms = 500;
+
+void pushb_init()
+{	
+     d78:	b580      	push	{r7, lr}
+     d7a:	af00      	add	r7, sp, #0
+	//Configure PTC7,10 for input
+	gpioc_pddr_config(7, GPIO_PDDR_IN);
+     d7c:	2007      	movs	r0, #7
+     d7e:	2100      	movs	r1, #0
+     d80:	f000 fc0a 	bl	1598 <gpioc_pddr_config>
+	gpioc_pddr_config(10, GPIO_PDDR_IN);
+     d84:	200a      	movs	r0, #10
+     d86:	2100      	movs	r1, #0
+     d88:	f000 fc06 	bl	1598 <gpioc_pddr_config>
+	//(5) PFE = 0 to disable the internal passive filter; 
+	//(6) SRE = 0 to select fast slew rate; 
+	//(7) PE = 1 to enable the internal pullup or pulldown resistor;
+	//(8) PS = 1 to enable the internal pullup resistor
+	
+	PORT_PCR(PORT_C, 7) = 0x010A0103;
+     d8c:	4b03      	ldr	r3, [pc, #12]	; (d9c <pushb_init+0x24>)
+     d8e:	4a04      	ldr	r2, [pc, #16]	; (da0 <pushb_init+0x28>)
+     d90:	601a      	str	r2, [r3, #0]
+	PORT_PCR(PORT_C, 10) = 0x010A0103;
+     d92:	4b04      	ldr	r3, [pc, #16]	; (da4 <pushb_init+0x2c>)
+     d94:	4a02      	ldr	r2, [pc, #8]	; (da0 <pushb_init+0x28>)
+     d96:	601a      	str	r2, [r3, #0]
+}
+     d98:	46bd      	mov	sp, r7
+     d9a:	bd80      	pop	{r7, pc}
+     d9c:	4004b01c 	.word	0x4004b01c
+     da0:	010a0103 	.word	0x010a0103
+     da4:	4004b028 	.word	0x4004b028
+
+00000da8 <pushb1_callback>:
+
+void pushb1_callback()
+{
+     da8:	b580      	push	{r7, lr}
+     daa:	af00      	add	r7, sp, #0
+	if(!pb2_pressed)
+     dac:	4b0c      	ldr	r3, [pc, #48]	; (de0 <pushb1_callback+0x38>)
+     dae:	781b      	ldrb	r3, [r3, #0]
+     db0:	2b00      	cmp	r3, #0
+     db2:	d112      	bne.n	dda <pushb1_callback+0x32>
+	{
+		if(current_period_ms == 875)
+     db4:	4b0b      	ldr	r3, [pc, #44]	; (de4 <pushb1_callback+0x3c>)
+     db6:	681a      	ldr	r2, [r3, #0]
+     db8:	4b0b      	ldr	r3, [pc, #44]	; (de8 <pushb1_callback+0x40>)
+     dba:	429a      	cmp	r2, r3
+     dbc:	d105      	bne.n	dca <pushb1_callback+0x22>
+		{
+			current_period_ms = 125;
+     dbe:	4b09      	ldr	r3, [pc, #36]	; (de4 <pushb1_callback+0x3c>)
+     dc0:	227d      	movs	r2, #125	; 0x7d
+     dc2:	601a      	str	r2, [r3, #0]
+			SYST_CSR;
+     dc4:	4b09      	ldr	r3, [pc, #36]	; (dec <pushb1_callback+0x44>)
+     dc6:	681b      	ldr	r3, [r3, #0]
+     dc8:	e007      	b.n	dda <pushb1_callback+0x32>
+		}
+	
+		else
+		{
+			current_period_ms += 125;
+     dca:	4b06      	ldr	r3, [pc, #24]	; (de4 <pushb1_callback+0x3c>)
+     dcc:	681b      	ldr	r3, [r3, #0]
+     dce:	1c1a      	adds	r2, r3, #0
+     dd0:	327d      	adds	r2, #125	; 0x7d
+     dd2:	4b04      	ldr	r3, [pc, #16]	; (de4 <pushb1_callback+0x3c>)
+     dd4:	601a      	str	r2, [r3, #0]
+			SYST_CSR;
+     dd6:	4b05      	ldr	r3, [pc, #20]	; (dec <pushb1_callback+0x44>)
+     dd8:	681b      	ldr	r3, [r3, #0]
+		}
+	}
+}
+     dda:	46bd      	mov	sp, r7
+     ddc:	bd80      	pop	{r7, pc}
+     dde:	46c0      	nop			; (mov r8, r8)
+     de0:	1fffe014 	.word	0x1fffe014
+     de4:	1fffe000 	.word	0x1fffe000
+     de8:	0000036b 	.word	0x0000036b
+     dec:	e000e010 	.word	0xe000e010
+
+00000df0 <pushb2_callback>:
+
+void pushb2_callback()
+{
+     df0:	b580      	push	{r7, lr}
+     df2:	af00      	add	r7, sp, #0
+	if(!pb2_pressed)
+     df4:	4b09      	ldr	r3, [pc, #36]	; (e1c <pushb2_callback+0x2c>)
+     df6:	781b      	ldrb	r3, [r3, #0]
+     df8:	2b00      	cmp	r3, #0
+     dfa:	d106      	bne.n	e0a <pushb2_callback+0x1a>
+	{
+		//Toggle systick so it stops throwing interrupts
+		systick_cfg_int_state(systick_int_disabled);
+     dfc:	2000      	movs	r0, #0
+     dfe:	f7ff febd 	bl	b7c <systick_cfg_int_state>
+		pb2_pressed = true;
+     e02:	4b06      	ldr	r3, [pc, #24]	; (e1c <pushb2_callback+0x2c>)
+     e04:	2201      	movs	r2, #1
+     e06:	701a      	strb	r2, [r3, #0]
+     e08:	e005      	b.n	e16 <pushb2_callback+0x26>
+	}
+	else
+	{
+		pb2_pressed = false;
+     e0a:	4b04      	ldr	r3, [pc, #16]	; (e1c <pushb2_callback+0x2c>)
+     e0c:	2200      	movs	r2, #0
+     e0e:	701a      	strb	r2, [r3, #0]
+		systick_cfg_int_state(systick_int_enabled);
+     e10:	2001      	movs	r0, #1
+     e12:	f7ff feb3 	bl	b7c <systick_cfg_int_state>
+	}
+}
+     e16:	46bd      	mov	sp, r7
+     e18:	bd80      	pop	{r7, pc}
+     e1a:	46c0      	nop			; (mov r8, r8)
+     e1c:	1fffe014 	.word	0x1fffe014
+
+00000e20 <pushb_portc_debounce>:
+
+void pushb_portc_debounce(int p_pin)
+{
+     e20:	b580      	push	{r7, lr}
+     e22:	b084      	sub	sp, #16
+     e24:	af00      	add	r7, sp, #0
+     e26:	6078      	str	r0, [r7, #4]
+    uint32_t signal = 1;
+     e28:	2301      	movs	r3, #1
+     e2a:	60fb      	str	r3, [r7, #12]
+    uint16_t state = 0x0000;
+     e2c:	1c3b      	adds	r3, r7, #0
+     e2e:	330a      	adds	r3, #10
+     e30:	2200      	movs	r2, #0
+     e32:	801a      	strh	r2, [r3, #0]
+    do 
+    {
+        state = (state << 1) | signal | 0xE000;
+     e34:	1c3b      	adds	r3, r7, #0
+     e36:	330a      	adds	r3, #10
+     e38:	881b      	ldrh	r3, [r3, #0]
+     e3a:	005b      	lsls	r3, r3, #1
+     e3c:	b29a      	uxth	r2, r3
+     e3e:	68fb      	ldr	r3, [r7, #12]
+     e40:	b29b      	uxth	r3, r3
+     e42:	4313      	orrs	r3, r2
+     e44:	b29a      	uxth	r2, r3
+     e46:	1c3b      	adds	r3, r7, #0
+     e48:	330a      	adds	r3, #10
+     e4a:	490a      	ldr	r1, [pc, #40]	; (e74 <pushb_portc_debounce+0x54>)
+     e4c:	430a      	orrs	r2, r1
+     e4e:	801a      	strh	r2, [r3, #0]
+        signal = (~GPIOC_PDIR >> p_pin) & 0x01;
+     e50:	4b09      	ldr	r3, [pc, #36]	; (e78 <pushb_portc_debounce+0x58>)
+     e52:	691b      	ldr	r3, [r3, #16]
+     e54:	43da      	mvns	r2, r3
+     e56:	687b      	ldr	r3, [r7, #4]
+     e58:	40da      	lsrs	r2, r3
+     e5a:	2301      	movs	r3, #1
+     e5c:	4013      	ands	r3, r2
+     e5e:	60fb      	str	r3, [r7, #12]
+    } 
+    while (state != 0xF000);
+     e60:	1c3b      	adds	r3, r7, #0
+     e62:	330a      	adds	r3, #10
+     e64:	881a      	ldrh	r2, [r3, #0]
+     e66:	23f0      	movs	r3, #240	; 0xf0
+     e68:	021b      	lsls	r3, r3, #8
+     e6a:	429a      	cmp	r2, r3
+     e6c:	d1e2      	bne.n	e34 <pushb_portc_debounce+0x14>
+
+}
+     e6e:	46bd      	mov	sp, r7
+     e70:	b004      	add	sp, #16
+     e72:	bd80      	pop	{r7, pc}
+     e74:	ffffe000 	.word	0xffffe000
+     e78:	400ff080 	.word	0x400ff080
+
+00000e7c <callback_init>:
+#include "systick.h"
+
+callback_v_t g_portc_callback[32] = { 0 };
+
+void callback_init()
+{
+     e7c:	b580      	push	{r7, lr}
+     e7e:	af00      	add	r7, sp, #0
+	g_portc_callback[7] = pushb1_callback;
+     e80:	4b03      	ldr	r3, [pc, #12]	; (e90 <callback_init+0x14>)
+     e82:	4a04      	ldr	r2, [pc, #16]	; (e94 <callback_init+0x18>)
+     e84:	61da      	str	r2, [r3, #28]
+	g_portc_callback[10] = pushb2_callback;
+     e86:	4b02      	ldr	r3, [pc, #8]	; (e90 <callback_init+0x14>)
+     e88:	4a03      	ldr	r2, [pc, #12]	; (e98 <callback_init+0x1c>)
+     e8a:	629a      	str	r2, [r3, #40]	; 0x28
+}
+     e8c:	46bd      	mov	sp, r7
+     e8e:	bd80      	pop	{r7, pc}
+     e90:	1fffe018 	.word	0x1fffe018
+     e94:	00000da9 	.word	0x00000da9
+     e98:	00000df1 	.word	0x00000df1
+
+00000e9c <port_gpio_config>:
+
+void port_gpio_config(uint32_t port, uint32_t pin)
+{
+     e9c:	b580      	push	{r7, lr}
+     e9e:	b082      	sub	sp, #8
+     ea0:	af00      	add	r7, sp, #0
+     ea2:	6078      	str	r0, [r7, #4]
+     ea4:	6039      	str	r1, [r7, #0]
+	PORT_PCR(port, pin) &= 0b000 << 8;
+     ea6:	687b      	ldr	r3, [r7, #4]
+     ea8:	4912      	ldr	r1, [pc, #72]	; (ef4 <port_gpio_config+0x58>)
+     eaa:	185b      	adds	r3, r3, r1
+     eac:	029a      	lsls	r2, r3, #10
+     eae:	683b      	ldr	r3, [r7, #0]
+     eb0:	18d3      	adds	r3, r2, r3
+     eb2:	009b      	lsls	r3, r3, #2
+     eb4:	681b      	ldr	r3, [r3, #0]
+     eb6:	687b      	ldr	r3, [r7, #4]
+     eb8:	4a0e      	ldr	r2, [pc, #56]	; (ef4 <port_gpio_config+0x58>)
+     eba:	189b      	adds	r3, r3, r2
+     ebc:	029a      	lsls	r2, r3, #10
+     ebe:	683b      	ldr	r3, [r7, #0]
+     ec0:	18d3      	adds	r3, r2, r3
+     ec2:	009b      	lsls	r3, r3, #2
+     ec4:	2200      	movs	r2, #0
+     ec6:	601a      	str	r2, [r3, #0]
+	PORT_PCR(port, pin) |= 0b001 << 8;
+     ec8:	687b      	ldr	r3, [r7, #4]
+     eca:	490a      	ldr	r1, [pc, #40]	; (ef4 <port_gpio_config+0x58>)
+     ecc:	185b      	adds	r3, r3, r1
+     ece:	029a      	lsls	r2, r3, #10
+     ed0:	683b      	ldr	r3, [r7, #0]
+     ed2:	18d3      	adds	r3, r2, r3
+     ed4:	009b      	lsls	r3, r3, #2
+     ed6:	687a      	ldr	r2, [r7, #4]
+     ed8:	4906      	ldr	r1, [pc, #24]	; (ef4 <port_gpio_config+0x58>)
+     eda:	1852      	adds	r2, r2, r1
+     edc:	0291      	lsls	r1, r2, #10
+     ede:	683a      	ldr	r2, [r7, #0]
+     ee0:	188a      	adds	r2, r1, r2
+     ee2:	0092      	lsls	r2, r2, #2
+     ee4:	6812      	ldr	r2, [r2, #0]
+     ee6:	2180      	movs	r1, #128	; 0x80
+     ee8:	0049      	lsls	r1, r1, #1
+     eea:	430a      	orrs	r2, r1
+     eec:	601a      	str	r2, [r3, #0]
+}
+     eee:	46bd      	mov	sp, r7
+     ef0:	b002      	add	sp, #8
+     ef2:	bd80      	pop	{r7, pc}
+     ef4:	00040049 	.word	0x00040049
+
+00000ef8 <portscd_isr>:
+
+void portscd_isr()
+{
+     ef8:	b580      	push	{r7, lr}
+     efa:	af00      	add	r7, sp, #0
+	//check PTC7
+	if(PORTC_ISFR & 0x00000080)
+     efc:	4a19      	ldr	r2, [pc, #100]	; (f64 <portscd_isr+0x6c>)
+     efe:	23a0      	movs	r3, #160	; 0xa0
+     f00:	58d2      	ldr	r2, [r2, r3]
+     f02:	2380      	movs	r3, #128	; 0x80
+     f04:	4013      	ands	r3, r2
+     f06:	d011      	beq.n	f2c <portscd_isr+0x34>
+	{
+		//Clear IRF
+		PORTC_ISFR |= 0x00000080;
+     f08:	4a16      	ldr	r2, [pc, #88]	; (f64 <portscd_isr+0x6c>)
+     f0a:	4916      	ldr	r1, [pc, #88]	; (f64 <portscd_isr+0x6c>)
+     f0c:	23a0      	movs	r3, #160	; 0xa0
+     f0e:	58cb      	ldr	r3, [r1, r3]
+     f10:	2180      	movs	r1, #128	; 0x80
+     f12:	4319      	orrs	r1, r3
+     f14:	23a0      	movs	r3, #160	; 0xa0
+     f16:	50d1      	str	r1, [r2, r3]
+		
+		//Debounce switch
+		pushb_portc_debounce(7);
+     f18:	2007      	movs	r0, #7
+     f1a:	f7ff ff81 	bl	e20 <pushb_portc_debounce>
+		
+		if(g_portc_callback[7])
+     f1e:	4b12      	ldr	r3, [pc, #72]	; (f68 <portscd_isr+0x70>)
+     f20:	69db      	ldr	r3, [r3, #28]
+     f22:	2b00      	cmp	r3, #0
+     f24:	d002      	beq.n	f2c <portscd_isr+0x34>
+		{
+			g_portc_callback[7]();
+     f26:	4b10      	ldr	r3, [pc, #64]	; (f68 <portscd_isr+0x70>)
+     f28:	69db      	ldr	r3, [r3, #28]
+     f2a:	4798      	blx	r3
+		}
+	}
+	
+	//check PTC10
+	if(PORTC_ISFR & 0x00000400)
+     f2c:	4a0d      	ldr	r2, [pc, #52]	; (f64 <portscd_isr+0x6c>)
+     f2e:	23a0      	movs	r3, #160	; 0xa0
+     f30:	58d2      	ldr	r2, [r2, r3]
+     f32:	2380      	movs	r3, #128	; 0x80
+     f34:	00db      	lsls	r3, r3, #3
+     f36:	4013      	ands	r3, r2
+     f38:	d012      	beq.n	f60 <portscd_isr+0x68>
+	{
+		//Clear IRF
+		PORTC_ISFR |= 0x000000400;
+     f3a:	4a0a      	ldr	r2, [pc, #40]	; (f64 <portscd_isr+0x6c>)
+     f3c:	4909      	ldr	r1, [pc, #36]	; (f64 <portscd_isr+0x6c>)
+     f3e:	23a0      	movs	r3, #160	; 0xa0
+     f40:	58cb      	ldr	r3, [r1, r3]
+     f42:	2180      	movs	r1, #128	; 0x80
+     f44:	00c9      	lsls	r1, r1, #3
+     f46:	4319      	orrs	r1, r3
+     f48:	23a0      	movs	r3, #160	; 0xa0
+     f4a:	50d1      	str	r1, [r2, r3]
+		
+		//Debounce switch
+		pushb_portc_debounce(10);
+     f4c:	200a      	movs	r0, #10
+     f4e:	f7ff ff67 	bl	e20 <pushb_portc_debounce>
+		
+		if(g_portc_callback[10])
+     f52:	4b05      	ldr	r3, [pc, #20]	; (f68 <portscd_isr+0x70>)
+     f54:	6a9b      	ldr	r3, [r3, #40]	; 0x28
+     f56:	2b00      	cmp	r3, #0
+     f58:	d002      	beq.n	f60 <portscd_isr+0x68>
+		{
+			g_portc_callback[10]();
+     f5a:	4b03      	ldr	r3, [pc, #12]	; (f68 <portscd_isr+0x70>)
+     f5c:	6a9b      	ldr	r3, [r3, #40]	; 0x28
+     f5e:	4798      	blx	r3
+		}
+	}	
+}
+     f60:	46bd      	mov	sp, r7
+     f62:	bd80      	pop	{r7, pc}
+     f64:	4004b000 	.word	0x4004b000
+     f68:	1fffe018 	.word	0x1fffe018
+
+00000f6c <hardware_init>:
+
+#define forever for(;;)
+	
+
+void hardware_init()
+{
+     f6c:	b580      	push	{r7, lr}
+     f6e:	af00      	add	r7, sp, #0
+	//mask all interrupts
+	int_mask_all();
+     f70:	f000 faba 	bl	14e8 <int_mask_all>
+	
+	//Enable SIM clock to ports A-D
+	SIM_SCGC5 |= 0b1111 << 9;
+     f74:	4a38      	ldr	r2, [pc, #224]	; (1058 <hardware_init+0xec>)
+     f76:	4938      	ldr	r1, [pc, #224]	; (1058 <hardware_init+0xec>)
+     f78:	4b38      	ldr	r3, [pc, #224]	; (105c <hardware_init+0xf0>)
+     f7a:	58cb      	ldr	r3, [r1, r3]
+     f7c:	21f0      	movs	r1, #240	; 0xf0
+     f7e:	0149      	lsls	r1, r1, #5
+     f80:	4319      	orrs	r1, r3
+     f82:	4b36      	ldr	r3, [pc, #216]	; (105c <hardware_init+0xf0>)
+     f84:	50d1      	str	r1, [r2, r3]
+	
+	//initialize systick
+	systick_init(systick_period_isr_25_ms, 
+     f86:	4a36      	ldr	r2, [pc, #216]	; (1060 <hardware_init+0xf4>)
+     f88:	4b36      	ldr	r3, [pc, #216]	; (1064 <hardware_init+0xf8>)
+     f8a:	1c10      	adds	r0, r2, #0
+     f8c:	2101      	movs	r1, #1
+     f8e:	2201      	movs	r2, #1
+     f90:	f7ff fe2c 	bl	bec <systick_init>
+					systick_int_enabled, 
+					systick_state_enabled, 
+					systick_callback);
+
+	//configure port pins for GPIO
+	port_gpio_config(PORT_A, 1);
+     f94:	2000      	movs	r0, #0
+     f96:	2101      	movs	r1, #1
+     f98:	f7ff ff80 	bl	e9c <port_gpio_config>
+	port_gpio_config(PORT_A, 2);
+     f9c:	2000      	movs	r0, #0
+     f9e:	2102      	movs	r1, #2
+     fa0:	f7ff ff7c 	bl	e9c <port_gpio_config>
+	port_gpio_config(PORT_A, 4);
+     fa4:	2000      	movs	r0, #0
+     fa6:	2104      	movs	r1, #4
+     fa8:	f7ff ff78 	bl	e9c <port_gpio_config>
+	port_gpio_config(PORT_A, 12);
+     fac:	2000      	movs	r0, #0
+     fae:	210c      	movs	r1, #12
+     fb0:	f7ff ff74 	bl	e9c <port_gpio_config>
+	
+	port_gpio_config(PORT_B, 18);
+     fb4:	2001      	movs	r0, #1
+     fb6:	2112      	movs	r1, #18
+     fb8:	f7ff ff70 	bl	e9c <port_gpio_config>
+	port_gpio_config(PORT_B, 19);
+     fbc:	2001      	movs	r0, #1
+     fbe:	2113      	movs	r1, #19
+     fc0:	f7ff ff6c 	bl	e9c <port_gpio_config>
+	
+	port_gpio_config(PORT_C, 0);
+     fc4:	2002      	movs	r0, #2
+     fc6:	2100      	movs	r1, #0
+     fc8:	f7ff ff68 	bl	e9c <port_gpio_config>
+	port_gpio_config(PORT_C, 4);
+     fcc:	2002      	movs	r0, #2
+     fce:	2104      	movs	r1, #4
+     fd0:	f7ff ff64 	bl	e9c <port_gpio_config>
+	port_gpio_config(PORT_C, 6);
+     fd4:	2002      	movs	r0, #2
+     fd6:	2106      	movs	r1, #6
+     fd8:	f7ff ff60 	bl	e9c <port_gpio_config>
+	
+	port_gpio_config(PORT_D, 3);
+     fdc:	2003      	movs	r0, #3
+     fde:	2103      	movs	r1, #3
+     fe0:	f7ff ff5c 	bl	e9c <port_gpio_config>
+	
+	//initialize push button hardware
+	pushb_init();
+     fe4:	f7ff fec8 	bl	d78 <pushb_init>
+	
+	//Configure pins for output
+	gpioa_pddr_config(1, GPIO_PDDR_OUT);
+     fe8:	2001      	movs	r0, #1
+     fea:	2101      	movs	r1, #1
+     fec:	f000 fa88 	bl	1500 <gpioa_pddr_config>
+	gpioa_pddr_config(2, GPIO_PDDR_OUT);
+     ff0:	2002      	movs	r0, #2
+     ff2:	2101      	movs	r1, #1
+     ff4:	f000 fa84 	bl	1500 <gpioa_pddr_config>
+	gpioa_pddr_config(4, GPIO_PDDR_OUT);
+     ff8:	2004      	movs	r0, #4
+     ffa:	2101      	movs	r1, #1
+     ffc:	f000 fa80 	bl	1500 <gpioa_pddr_config>
+	gpioa_pddr_config(12, GPIO_PDDR_OUT);
+    1000:	200c      	movs	r0, #12
+    1002:	2101      	movs	r1, #1
+    1004:	f000 fa7c 	bl	1500 <gpioa_pddr_config>
+	
+	gpiob_pddr_config(18, GPIO_PDDR_OUT);
+    1008:	2012      	movs	r0, #18
+    100a:	2101      	movs	r1, #1
+    100c:	f000 fa9e 	bl	154c <gpiob_pddr_config>
+	gpiob_pddr_config(19, GPIO_PDDR_OUT);
+    1010:	2013      	movs	r0, #19
+    1012:	2101      	movs	r1, #1
+    1014:	f000 fa9a 	bl	154c <gpiob_pddr_config>
+	
+	gpioc_pddr_config(0, GPIO_PDDR_OUT);
+    1018:	2000      	movs	r0, #0
+    101a:	2101      	movs	r1, #1
+    101c:	f000 fabc 	bl	1598 <gpioc_pddr_config>
+	gpioc_pddr_config(4, GPIO_PDDR_OUT);
+    1020:	2004      	movs	r0, #4
+    1022:	2101      	movs	r1, #1
+    1024:	f000 fab8 	bl	1598 <gpioc_pddr_config>
+	gpioc_pddr_config(6, GPIO_PDDR_OUT);
+    1028:	2006      	movs	r0, #6
+    102a:	2101      	movs	r1, #1
+    102c:	f000 fab4 	bl	1598 <gpioc_pddr_config>
+	
+	gpiod_pddr_config(3, GPIO_PDDR_OUT);
+    1030:	2003      	movs	r0, #3
+    1032:	2101      	movs	r1, #1
+    1034:	f000 fad6 	bl	15e4 <gpiod_pddr_config>
+	
+	//initialize interrupts for ports C and D (though we only need C)
+	int_init(int_src_portscd, int_priority_1, int_state_enabled);
+    1038:	201f      	movs	r0, #31
+    103a:	2140      	movs	r1, #64	; 0x40
+    103c:	2201      	movs	r2, #1
+    103e:	f000 fa37 	bl	14b0 <int_init>
+	
+	led_on(led_logic, 0);
+    1042:	4b09      	ldr	r3, [pc, #36]	; (1068 <hardware_init+0xfc>)
+    1044:	781b      	ldrb	r3, [r3, #0]
+    1046:	1c18      	adds	r0, r3, #0
+    1048:	2100      	movs	r1, #0
+    104a:	f000 f825 	bl	1098 <led_on>
+	
+	//Unmask all interrupts
+	int_unmask_all();
+    104e:	f000 fa51 	bl	14f4 <int_unmask_all>
+}
+    1052:	46bd      	mov	sp, r7
+    1054:	bd80      	pop	{r7, pc}
+    1056:	46c0      	nop			; (mov r8, r8)
+    1058:	40047000 	.word	0x40047000
+    105c:	00001038 	.word	0x00001038
+    1060:	00124f7f 	.word	0x00124f7f
+    1064:	00000ca9 	.word	0x00000ca9
+    1068:	1fffe009 	.word	0x1fffe009
+
+0000106c <sw_init>:
+
+void sw_init()
+{
+    106c:	b580      	push	{r7, lr}
+    106e:	af00      	add	r7, sp, #0
+	callback_init();
+    1070:	f7ff ff04 	bl	e7c <callback_init>
+}
+    1074:	46bd      	mov	sp, r7
+    1076:	bd80      	pop	{r7, pc}
+
+00001078 <run>:
+
+void run()
+{
+    1078:	b580      	push	{r7, lr}
+    107a:	af00      	add	r7, sp, #0
+    // We have nothing else to do in this particular application, but if we did, we would do it here.
+    forever 
+    {
+    	
+    }
+    107c:	e7fe      	b.n	107c <run+0x4>
+    107e:	46c0      	nop			; (mov r8, r8)
+
+00001080 <main>:
+}
+
+int main()
+{
+    1080:	b580      	push	{r7, lr}
+    1082:	af00      	add	r7, sp, #0
+    hardware_init();
+    1084:	f7ff ff72 	bl	f6c <hardware_init>
+    sw_init();
+    1088:	f7ff fff0 	bl	106c <sw_init>
+    run();
+    108c:	f7ff fff4 	bl	1078 <run>
+    return 0;
+    1090:	2300      	movs	r3, #0
+}
+    1092:	1c18      	adds	r0, r3, #0
+    1094:	46bd      	mov	sp, r7
+    1096:	bd80      	pop	{r7, pc}
+
+00001098 <led_on>:
+//************************************************************************************************************
+#include "led.h"
+
+//Turns on the LED at Port B Pin n
+void led_on(led_logic_t logic, uint32_t led_number)
+{
+    1098:	b580      	push	{r7, lr}
+    109a:	b082      	sub	sp, #8
+    109c:	af00      	add	r7, sp, #0
+    109e:	1c02      	adds	r2, r0, #0
+    10a0:	6039      	str	r1, [r7, #0]
+    10a2:	1dfb      	adds	r3, r7, #7
+    10a4:	701a      	strb	r2, [r3, #0]
+	//if using positive logic (LED_LOGIC_POS)
+	if(logic == led_logic_pos)
+    10a6:	1dfb      	adds	r3, r7, #7
+    10a8:	781b      	ldrb	r3, [r3, #0]
+    10aa:	2b00      	cmp	r3, #0
+    10ac:	d153      	bne.n	1156 <led_on+0xbe>
+	{	
+		switch(led_number)
+    10ae:	683b      	ldr	r3, [r7, #0]
+    10b0:	2b09      	cmp	r3, #9
+    10b2:	d900      	bls.n	10b6 <led_on+0x1e>
+    10b4:	e09e      	b.n	11f4 <led_on+0x15c>
+    10b6:	683b      	ldr	r3, [r7, #0]
+    10b8:	009a      	lsls	r2, r3, #2
+    10ba:	4b51      	ldr	r3, [pc, #324]	; (1200 <led_on+0x168>)
+    10bc:	18d3      	adds	r3, r2, r3
+    10be:	681b      	ldr	r3, [r3, #0]
+    10c0:	469f      	mov	pc, r3
+		{
+			case 0:
+			{
+				GPIOB_PDOR |= (1 << 18);
+    10c2:	4b50      	ldr	r3, [pc, #320]	; (1204 <led_on+0x16c>)
+    10c4:	4a4f      	ldr	r2, [pc, #316]	; (1204 <led_on+0x16c>)
+    10c6:	6812      	ldr	r2, [r2, #0]
+    10c8:	2180      	movs	r1, #128	; 0x80
+    10ca:	02c9      	lsls	r1, r1, #11
+    10cc:	430a      	orrs	r2, r1
+    10ce:	601a      	str	r2, [r3, #0]
+				break;
+    10d0:	e093      	b.n	11fa <led_on+0x162>
+			}
+			case 1:
+			{
+				GPIOA_PDOR |= (1 << 1);
+    10d2:	4b4d      	ldr	r3, [pc, #308]	; (1208 <led_on+0x170>)
+    10d4:	4a4c      	ldr	r2, [pc, #304]	; (1208 <led_on+0x170>)
+    10d6:	6812      	ldr	r2, [r2, #0]
+    10d8:	2102      	movs	r1, #2
+    10da:	430a      	orrs	r2, r1
+    10dc:	601a      	str	r2, [r3, #0]
+				break;
+    10de:	e08c      	b.n	11fa <led_on+0x162>
+			}
+			case 2:
+			{
+				GPIOB_PDOR |= (1 << 19);
+    10e0:	4b48      	ldr	r3, [pc, #288]	; (1204 <led_on+0x16c>)
+    10e2:	4a48      	ldr	r2, [pc, #288]	; (1204 <led_on+0x16c>)
+    10e4:	6812      	ldr	r2, [r2, #0]
+    10e6:	2180      	movs	r1, #128	; 0x80
+    10e8:	0309      	lsls	r1, r1, #12
+    10ea:	430a      	orrs	r2, r1
+    10ec:	601a      	str	r2, [r3, #0]
+				break;
+    10ee:	e084      	b.n	11fa <led_on+0x162>
+			}
+			case 3:
+			{
+				GPIOA_PDOR |= (1 << 2);
+    10f0:	4b45      	ldr	r3, [pc, #276]	; (1208 <led_on+0x170>)
+    10f2:	4a45      	ldr	r2, [pc, #276]	; (1208 <led_on+0x170>)
+    10f4:	6812      	ldr	r2, [r2, #0]
+    10f6:	2104      	movs	r1, #4
+    10f8:	430a      	orrs	r2, r1
+    10fa:	601a      	str	r2, [r3, #0]
+				break;
+    10fc:	e07d      	b.n	11fa <led_on+0x162>
+			}
+			case 4:
+			{
+				GPIOC_PDOR |= (1 << 0);
+    10fe:	4b43      	ldr	r3, [pc, #268]	; (120c <led_on+0x174>)
+    1100:	4a42      	ldr	r2, [pc, #264]	; (120c <led_on+0x174>)
+    1102:	6812      	ldr	r2, [r2, #0]
+    1104:	2101      	movs	r1, #1
+    1106:	430a      	orrs	r2, r1
+    1108:	601a      	str	r2, [r3, #0]
+				break;
+    110a:	e076      	b.n	11fa <led_on+0x162>
+			}
+			case 5:
+			{
+				GPIOD_PDOR |= (1 << 3);
+    110c:	4b40      	ldr	r3, [pc, #256]	; (1210 <led_on+0x178>)
+    110e:	4a40      	ldr	r2, [pc, #256]	; (1210 <led_on+0x178>)
+    1110:	6812      	ldr	r2, [r2, #0]
+    1112:	2108      	movs	r1, #8
+    1114:	430a      	orrs	r2, r1
+    1116:	601a      	str	r2, [r3, #0]
+				break;
+    1118:	e06f      	b.n	11fa <led_on+0x162>
+			}
+			case 6:
+			{
+				GPIOC_PDOR |= (1 << 4);
+    111a:	4b3c      	ldr	r3, [pc, #240]	; (120c <led_on+0x174>)
+    111c:	4a3b      	ldr	r2, [pc, #236]	; (120c <led_on+0x174>)
+    111e:	6812      	ldr	r2, [r2, #0]
+    1120:	2110      	movs	r1, #16
+    1122:	430a      	orrs	r2, r1
+    1124:	601a      	str	r2, [r3, #0]
+				break;
+    1126:	e068      	b.n	11fa <led_on+0x162>
+			}
+			case 7:
+			{
+				GPIOA_PDOR |= (1 << 12);
+    1128:	4b37      	ldr	r3, [pc, #220]	; (1208 <led_on+0x170>)
+    112a:	4a37      	ldr	r2, [pc, #220]	; (1208 <led_on+0x170>)
+    112c:	6812      	ldr	r2, [r2, #0]
+    112e:	2180      	movs	r1, #128	; 0x80
+    1130:	0149      	lsls	r1, r1, #5
+    1132:	430a      	orrs	r2, r1
+    1134:	601a      	str	r2, [r3, #0]
+				break;
+    1136:	e060      	b.n	11fa <led_on+0x162>
+			}
+			case 8:
+			{
+				GPIOC_PDOR |= (1 << 6);
+    1138:	4b34      	ldr	r3, [pc, #208]	; (120c <led_on+0x174>)
+    113a:	4a34      	ldr	r2, [pc, #208]	; (120c <led_on+0x174>)
+    113c:	6812      	ldr	r2, [r2, #0]
+    113e:	2140      	movs	r1, #64	; 0x40
+    1140:	430a      	orrs	r2, r1
+    1142:	601a      	str	r2, [r3, #0]
+				break;
+    1144:	e059      	b.n	11fa <led_on+0x162>
+			}
+			case 9:
+			{
+				GPIOA_PDOR |= (1 << 4);
+    1146:	4b30      	ldr	r3, [pc, #192]	; (1208 <led_on+0x170>)
+    1148:	4a2f      	ldr	r2, [pc, #188]	; (1208 <led_on+0x170>)
+    114a:	6812      	ldr	r2, [r2, #0]
+    114c:	2110      	movs	r1, #16
+    114e:	430a      	orrs	r2, r1
+    1150:	601a      	str	r2, [r3, #0]
+				break;
+    1152:	46c0      	nop			; (mov r8, r8)
+    1154:	e051      	b.n	11fa <led_on+0x162>
+		}
+	}
+	//if using negative logic (LED_LOGIC_NEG)
+	else
+	{
+		switch(led_number)
+    1156:	683b      	ldr	r3, [r7, #0]
+    1158:	2b09      	cmp	r3, #9
+    115a:	d84d      	bhi.n	11f8 <led_on+0x160>
+    115c:	683b      	ldr	r3, [r7, #0]
+    115e:	009a      	lsls	r2, r3, #2
+    1160:	4b2c      	ldr	r3, [pc, #176]	; (1214 <led_on+0x17c>)
+    1162:	18d3      	adds	r3, r2, r3
+    1164:	681b      	ldr	r3, [r3, #0]
+    1166:	469f      	mov	pc, r3
+		{
+			case 0:
+			{
+				GPIOB_PDOR &= ~(1 << 18);
+    1168:	4b26      	ldr	r3, [pc, #152]	; (1204 <led_on+0x16c>)
+    116a:	4a26      	ldr	r2, [pc, #152]	; (1204 <led_on+0x16c>)
+    116c:	6811      	ldr	r1, [r2, #0]
+    116e:	4a2a      	ldr	r2, [pc, #168]	; (1218 <led_on+0x180>)
+    1170:	400a      	ands	r2, r1
+    1172:	601a      	str	r2, [r3, #0]
+				break;
+    1174:	e041      	b.n	11fa <led_on+0x162>
+			}
+			case 1:
+			{
+				GPIOA_PDOR &= ~(1 << 1);
+    1176:	4b24      	ldr	r3, [pc, #144]	; (1208 <led_on+0x170>)
+    1178:	4a23      	ldr	r2, [pc, #140]	; (1208 <led_on+0x170>)
+    117a:	6812      	ldr	r2, [r2, #0]
+    117c:	2102      	movs	r1, #2
+    117e:	438a      	bics	r2, r1
+    1180:	601a      	str	r2, [r3, #0]
+				break;
+    1182:	e03a      	b.n	11fa <led_on+0x162>
+			}
+			case 2:
+			{
+				GPIOB_PDOR &= ~(1 << 19);
+    1184:	4b1f      	ldr	r3, [pc, #124]	; (1204 <led_on+0x16c>)
+    1186:	4a1f      	ldr	r2, [pc, #124]	; (1204 <led_on+0x16c>)
+    1188:	6811      	ldr	r1, [r2, #0]
+    118a:	4a24      	ldr	r2, [pc, #144]	; (121c <led_on+0x184>)
+    118c:	400a      	ands	r2, r1
+    118e:	601a      	str	r2, [r3, #0]
+				break;
+    1190:	e033      	b.n	11fa <led_on+0x162>
+			}
+			case 3:
+			{
+				GPIOA_PDOR &= ~(1 << 2);
+    1192:	4b1d      	ldr	r3, [pc, #116]	; (1208 <led_on+0x170>)
+    1194:	4a1c      	ldr	r2, [pc, #112]	; (1208 <led_on+0x170>)
+    1196:	6812      	ldr	r2, [r2, #0]
+    1198:	2104      	movs	r1, #4
+    119a:	438a      	bics	r2, r1
+    119c:	601a      	str	r2, [r3, #0]
+				break;
+    119e:	e02c      	b.n	11fa <led_on+0x162>
+			}
+			case 4:
+			{
+				GPIOC_PDOR &= ~(1 << 0);
+    11a0:	4b1a      	ldr	r3, [pc, #104]	; (120c <led_on+0x174>)
+    11a2:	4a1a      	ldr	r2, [pc, #104]	; (120c <led_on+0x174>)
+    11a4:	6812      	ldr	r2, [r2, #0]
+    11a6:	2101      	movs	r1, #1
+    11a8:	438a      	bics	r2, r1
+    11aa:	601a      	str	r2, [r3, #0]
+				break;
+    11ac:	e025      	b.n	11fa <led_on+0x162>
+			}
+			case 5:
+			{
+				GPIOD_PDOR &= ~(1 << 3);
+    11ae:	4b18      	ldr	r3, [pc, #96]	; (1210 <led_on+0x178>)
+    11b0:	4a17      	ldr	r2, [pc, #92]	; (1210 <led_on+0x178>)
+    11b2:	6812      	ldr	r2, [r2, #0]
+    11b4:	2108      	movs	r1, #8
+    11b6:	438a      	bics	r2, r1
+    11b8:	601a      	str	r2, [r3, #0]
+				break;
+    11ba:	e01e      	b.n	11fa <led_on+0x162>
+			}
+			case 6:
+			{
+				GPIOC_PDOR &= ~(1 << 4);
+    11bc:	4b13      	ldr	r3, [pc, #76]	; (120c <led_on+0x174>)
+    11be:	4a13      	ldr	r2, [pc, #76]	; (120c <led_on+0x174>)
+    11c0:	6812      	ldr	r2, [r2, #0]
+    11c2:	2110      	movs	r1, #16
+    11c4:	438a      	bics	r2, r1
+    11c6:	601a      	str	r2, [r3, #0]
+				break;
+    11c8:	e017      	b.n	11fa <led_on+0x162>
+			}
+			case 7:
+			{
+				GPIOA_PDOR &= ~(1 << 12);
+    11ca:	4b0f      	ldr	r3, [pc, #60]	; (1208 <led_on+0x170>)
+    11cc:	4a0e      	ldr	r2, [pc, #56]	; (1208 <led_on+0x170>)
+    11ce:	6811      	ldr	r1, [r2, #0]
+    11d0:	4a13      	ldr	r2, [pc, #76]	; (1220 <led_on+0x188>)
+    11d2:	400a      	ands	r2, r1
+    11d4:	601a      	str	r2, [r3, #0]
+				break;
+    11d6:	e010      	b.n	11fa <led_on+0x162>
+			}
+			case 8:
+			{
+				GPIOC_PDOR &= ~(1 << 6);
+    11d8:	4b0c      	ldr	r3, [pc, #48]	; (120c <led_on+0x174>)
+    11da:	4a0c      	ldr	r2, [pc, #48]	; (120c <led_on+0x174>)
+    11dc:	6812      	ldr	r2, [r2, #0]
+    11de:	2140      	movs	r1, #64	; 0x40
+    11e0:	438a      	bics	r2, r1
+    11e2:	601a      	str	r2, [r3, #0]
+				break;
+    11e4:	e009      	b.n	11fa <led_on+0x162>
+			}
+			case 9:
+			{
+				GPIOA_PDOR &= ~(1 << 4);
+    11e6:	4b08      	ldr	r3, [pc, #32]	; (1208 <led_on+0x170>)
+    11e8:	4a07      	ldr	r2, [pc, #28]	; (1208 <led_on+0x170>)
+    11ea:	6812      	ldr	r2, [r2, #0]
+    11ec:	2110      	movs	r1, #16
+    11ee:	438a      	bics	r2, r1
+    11f0:	601a      	str	r2, [r3, #0]
+				break;
+    11f2:	e002      	b.n	11fa <led_on+0x162>
+				GPIOA_PDOR |= (1 << 4);
+				break;
+			}
+			default:
+			{
+				break;
+    11f4:	46c0      	nop			; (mov r8, r8)
+    11f6:	e000      	b.n	11fa <led_on+0x162>
+				GPIOA_PDOR &= ~(1 << 4);
+				break;
+			}
+			default:
+			{
+				break;
+    11f8:	46c0      	nop			; (mov r8, r8)
+			}
+		}
+	}
+}
+    11fa:	46bd      	mov	sp, r7
+    11fc:	b002      	add	sp, #8
+    11fe:	bd80      	pop	{r7, pc}
+    1200:	00001630 	.word	0x00001630
+    1204:	400ff040 	.word	0x400ff040
+    1208:	400ff000 	.word	0x400ff000
+    120c:	400ff080 	.word	0x400ff080
+    1210:	400ff0c0 	.word	0x400ff0c0
+    1214:	00001658 	.word	0x00001658
+    1218:	fffbffff 	.word	0xfffbffff
+    121c:	fff7ffff 	.word	0xfff7ffff
+    1220:	ffffefff 	.word	0xffffefff
+
+00001224 <led_off>:
+	}
+}
+
+//Turns off the LED at Port B Pin n
+void led_off(led_logic_t logic, uint32_t led_number)
+{
+    1224:	b580      	push	{r7, lr}
+    1226:	b082      	sub	sp, #8
+    1228:	af00      	add	r7, sp, #0
+    122a:	1c02      	adds	r2, r0, #0
+    122c:	6039      	str	r1, [r7, #0]
+    122e:	1dfb      	adds	r3, r7, #7
+    1230:	701a      	strb	r2, [r3, #0]
+	//if using positive logic (LED_LOGIC_POS)
+	if(logic == led_logic_pos)
+    1232:	1dfb      	adds	r3, r7, #7
+    1234:	781b      	ldrb	r3, [r3, #0]
+    1236:	2b00      	cmp	r3, #0
+    1238:	d150      	bne.n	12dc <led_off+0xb8>
+	{
+		switch(led_number)
+    123a:	683b      	ldr	r3, [r7, #0]
+    123c:	2b09      	cmp	r3, #9
+    123e:	d900      	bls.n	1242 <led_off+0x1e>
+    1240:	e09e      	b.n	1380 <led_off+0x15c>
+    1242:	683b      	ldr	r3, [r7, #0]
+    1244:	009a      	lsls	r2, r3, #2
+    1246:	4b51      	ldr	r3, [pc, #324]	; (138c <led_off+0x168>)
+    1248:	18d3      	adds	r3, r2, r3
+    124a:	681b      	ldr	r3, [r3, #0]
+    124c:	469f      	mov	pc, r3
+		{
+			case 0:
+			{
+				GPIOB_PDOR &= ~(1 << 18);
+    124e:	4b50      	ldr	r3, [pc, #320]	; (1390 <led_off+0x16c>)
+    1250:	4a4f      	ldr	r2, [pc, #316]	; (1390 <led_off+0x16c>)
+    1252:	6811      	ldr	r1, [r2, #0]
+    1254:	4a4f      	ldr	r2, [pc, #316]	; (1394 <led_off+0x170>)
+    1256:	400a      	ands	r2, r1
+    1258:	601a      	str	r2, [r3, #0]
+				break;
+    125a:	e094      	b.n	1386 <led_off+0x162>
+			}
+			case 1:
+			{
+				GPIOA_PDOR &= ~(1 << 1);
+    125c:	4b4e      	ldr	r3, [pc, #312]	; (1398 <led_off+0x174>)
+    125e:	4a4e      	ldr	r2, [pc, #312]	; (1398 <led_off+0x174>)
+    1260:	6812      	ldr	r2, [r2, #0]
+    1262:	2102      	movs	r1, #2
+    1264:	438a      	bics	r2, r1
+    1266:	601a      	str	r2, [r3, #0]
+				break;
+    1268:	e08d      	b.n	1386 <led_off+0x162>
+			}
+			case 2:
+			{
+				GPIOB_PDOR &= ~(1 << 19);
+    126a:	4b49      	ldr	r3, [pc, #292]	; (1390 <led_off+0x16c>)
+    126c:	4a48      	ldr	r2, [pc, #288]	; (1390 <led_off+0x16c>)
+    126e:	6811      	ldr	r1, [r2, #0]
+    1270:	4a4a      	ldr	r2, [pc, #296]	; (139c <led_off+0x178>)
+    1272:	400a      	ands	r2, r1
+    1274:	601a      	str	r2, [r3, #0]
+				break;
+    1276:	e086      	b.n	1386 <led_off+0x162>
+			}
+			case 3:
+			{
+				GPIOA_PDOR &= ~(1 << 2);
+    1278:	4b47      	ldr	r3, [pc, #284]	; (1398 <led_off+0x174>)
+    127a:	4a47      	ldr	r2, [pc, #284]	; (1398 <led_off+0x174>)
+    127c:	6812      	ldr	r2, [r2, #0]
+    127e:	2104      	movs	r1, #4
+    1280:	438a      	bics	r2, r1
+    1282:	601a      	str	r2, [r3, #0]
+				break;
+    1284:	e07f      	b.n	1386 <led_off+0x162>
+			}
+			case 4:
+			{
+				GPIOC_PDOR &= ~(1 << 0);
+    1286:	4b46      	ldr	r3, [pc, #280]	; (13a0 <led_off+0x17c>)
+    1288:	4a45      	ldr	r2, [pc, #276]	; (13a0 <led_off+0x17c>)
+    128a:	6812      	ldr	r2, [r2, #0]
+    128c:	2101      	movs	r1, #1
+    128e:	438a      	bics	r2, r1
+    1290:	601a      	str	r2, [r3, #0]
+				break;
+    1292:	e078      	b.n	1386 <led_off+0x162>
+			}
+			case 5:
+			{
+				GPIOD_PDOR &= ~(1 << 3);
+    1294:	4b43      	ldr	r3, [pc, #268]	; (13a4 <led_off+0x180>)
+    1296:	4a43      	ldr	r2, [pc, #268]	; (13a4 <led_off+0x180>)
+    1298:	6812      	ldr	r2, [r2, #0]
+    129a:	2108      	movs	r1, #8
+    129c:	438a      	bics	r2, r1
+    129e:	601a      	str	r2, [r3, #0]
+				break;
+    12a0:	e071      	b.n	1386 <led_off+0x162>
+			}
+			case 6:
+			{
+				GPIOC_PDOR &= ~(1 << 4);
+    12a2:	4b3f      	ldr	r3, [pc, #252]	; (13a0 <led_off+0x17c>)
+    12a4:	4a3e      	ldr	r2, [pc, #248]	; (13a0 <led_off+0x17c>)
+    12a6:	6812      	ldr	r2, [r2, #0]
+    12a8:	2110      	movs	r1, #16
+    12aa:	438a      	bics	r2, r1
+    12ac:	601a      	str	r2, [r3, #0]
+				break;
+    12ae:	e06a      	b.n	1386 <led_off+0x162>
+			}
+			case 7:
+			{
+				GPIOA_PDOR &= ~(1 << 12);
+    12b0:	4b39      	ldr	r3, [pc, #228]	; (1398 <led_off+0x174>)
+    12b2:	4a39      	ldr	r2, [pc, #228]	; (1398 <led_off+0x174>)
+    12b4:	6811      	ldr	r1, [r2, #0]
+    12b6:	4a3c      	ldr	r2, [pc, #240]	; (13a8 <led_off+0x184>)
+    12b8:	400a      	ands	r2, r1
+    12ba:	601a      	str	r2, [r3, #0]
+				break;
+    12bc:	e063      	b.n	1386 <led_off+0x162>
+			}
+			case 8:
+			{
+				GPIOC_PDOR &= ~(1 << 6);
+    12be:	4b38      	ldr	r3, [pc, #224]	; (13a0 <led_off+0x17c>)
+    12c0:	4a37      	ldr	r2, [pc, #220]	; (13a0 <led_off+0x17c>)
+    12c2:	6812      	ldr	r2, [r2, #0]
+    12c4:	2140      	movs	r1, #64	; 0x40
+    12c6:	438a      	bics	r2, r1
+    12c8:	601a      	str	r2, [r3, #0]
+				break;
+    12ca:	e05c      	b.n	1386 <led_off+0x162>
+			}
+			case 9:
+			{
+				GPIOA_PDOR &= ~(1 << 4);
+    12cc:	4b32      	ldr	r3, [pc, #200]	; (1398 <led_off+0x174>)
+    12ce:	4a32      	ldr	r2, [pc, #200]	; (1398 <led_off+0x174>)
+    12d0:	6812      	ldr	r2, [r2, #0]
+    12d2:	2110      	movs	r1, #16
+    12d4:	438a      	bics	r2, r1
+    12d6:	601a      	str	r2, [r3, #0]
+				break;
+    12d8:	46c0      	nop			; (mov r8, r8)
+    12da:	e054      	b.n	1386 <led_off+0x162>
+		}
+	}
+	//if using negative logic (LED_LOGIC_NEG)
+	else
+	{
+		switch(led_number)
+    12dc:	683b      	ldr	r3, [r7, #0]
+    12de:	2b09      	cmp	r3, #9
+    12e0:	d850      	bhi.n	1384 <led_off+0x160>
+    12e2:	683b      	ldr	r3, [r7, #0]
+    12e4:	009a      	lsls	r2, r3, #2
+    12e6:	4b31      	ldr	r3, [pc, #196]	; (13ac <led_off+0x188>)
+    12e8:	18d3      	adds	r3, r2, r3
+    12ea:	681b      	ldr	r3, [r3, #0]
+    12ec:	469f      	mov	pc, r3
+		{
+			case 0:
+			{
+				GPIOB_PDOR |= (1 << 18);
+    12ee:	4b28      	ldr	r3, [pc, #160]	; (1390 <led_off+0x16c>)
+    12f0:	4a27      	ldr	r2, [pc, #156]	; (1390 <led_off+0x16c>)
+    12f2:	6812      	ldr	r2, [r2, #0]
+    12f4:	2180      	movs	r1, #128	; 0x80
+    12f6:	02c9      	lsls	r1, r1, #11
+    12f8:	430a      	orrs	r2, r1
+    12fa:	601a      	str	r2, [r3, #0]
+				break;
+    12fc:	e043      	b.n	1386 <led_off+0x162>
+			}
+			case 1:
+			{
+				GPIOA_PDOR |= (1 << 1);
+    12fe:	4b26      	ldr	r3, [pc, #152]	; (1398 <led_off+0x174>)
+    1300:	4a25      	ldr	r2, [pc, #148]	; (1398 <led_off+0x174>)
+    1302:	6812      	ldr	r2, [r2, #0]
+    1304:	2102      	movs	r1, #2
+    1306:	430a      	orrs	r2, r1
+    1308:	601a      	str	r2, [r3, #0]
+				break;
+    130a:	e03c      	b.n	1386 <led_off+0x162>
+			}
+			case 2:
+			{
+				GPIOB_PDOR |= (1 << 19);
+    130c:	4b20      	ldr	r3, [pc, #128]	; (1390 <led_off+0x16c>)
+    130e:	4a20      	ldr	r2, [pc, #128]	; (1390 <led_off+0x16c>)
+    1310:	6812      	ldr	r2, [r2, #0]
+    1312:	2180      	movs	r1, #128	; 0x80
+    1314:	0309      	lsls	r1, r1, #12
+    1316:	430a      	orrs	r2, r1
+    1318:	601a      	str	r2, [r3, #0]
+				break;
+    131a:	e034      	b.n	1386 <led_off+0x162>
+			}
+			case 3:
+			{
+				GPIOA_PDOR |= (1 << 2);
+    131c:	4b1e      	ldr	r3, [pc, #120]	; (1398 <led_off+0x174>)
+    131e:	4a1e      	ldr	r2, [pc, #120]	; (1398 <led_off+0x174>)
+    1320:	6812      	ldr	r2, [r2, #0]
+    1322:	2104      	movs	r1, #4
+    1324:	430a      	orrs	r2, r1
+    1326:	601a      	str	r2, [r3, #0]
+				break;
+    1328:	e02d      	b.n	1386 <led_off+0x162>
+			}
+			case 4:
+			{
+				GPIOC_PDOR |= (1 << 0);
+    132a:	4b1d      	ldr	r3, [pc, #116]	; (13a0 <led_off+0x17c>)
+    132c:	4a1c      	ldr	r2, [pc, #112]	; (13a0 <led_off+0x17c>)
+    132e:	6812      	ldr	r2, [r2, #0]
+    1330:	2101      	movs	r1, #1
+    1332:	430a      	orrs	r2, r1
+    1334:	601a      	str	r2, [r3, #0]
+				break;
+    1336:	e026      	b.n	1386 <led_off+0x162>
+			}
+			case 5:
+			{
+				GPIOD_PDOR |= (1 << 3);
+    1338:	4b1a      	ldr	r3, [pc, #104]	; (13a4 <led_off+0x180>)
+    133a:	4a1a      	ldr	r2, [pc, #104]	; (13a4 <led_off+0x180>)
+    133c:	6812      	ldr	r2, [r2, #0]
+    133e:	2108      	movs	r1, #8
+    1340:	430a      	orrs	r2, r1
+    1342:	601a      	str	r2, [r3, #0]
+				break;
+    1344:	e01f      	b.n	1386 <led_off+0x162>
+			}
+			case 6:
+			{
+				GPIOC_PDOR |= (1 << 4);
+    1346:	4b16      	ldr	r3, [pc, #88]	; (13a0 <led_off+0x17c>)
+    1348:	4a15      	ldr	r2, [pc, #84]	; (13a0 <led_off+0x17c>)
+    134a:	6812      	ldr	r2, [r2, #0]
+    134c:	2110      	movs	r1, #16
+    134e:	430a      	orrs	r2, r1
+    1350:	601a      	str	r2, [r3, #0]
+				break;
+    1352:	e018      	b.n	1386 <led_off+0x162>
+			}
+			case 7:
+			{
+				GPIOA_PDOR |= (1 << 12);
+    1354:	4b10      	ldr	r3, [pc, #64]	; (1398 <led_off+0x174>)
+    1356:	4a10      	ldr	r2, [pc, #64]	; (1398 <led_off+0x174>)
+    1358:	6812      	ldr	r2, [r2, #0]
+    135a:	2180      	movs	r1, #128	; 0x80
+    135c:	0149      	lsls	r1, r1, #5
+    135e:	430a      	orrs	r2, r1
+    1360:	601a      	str	r2, [r3, #0]
+				break;
+    1362:	e010      	b.n	1386 <led_off+0x162>
+			}
+			case 8:
+			{
+				GPIOC_PDOR |= (1 << 6);
+    1364:	4b0e      	ldr	r3, [pc, #56]	; (13a0 <led_off+0x17c>)
+    1366:	4a0e      	ldr	r2, [pc, #56]	; (13a0 <led_off+0x17c>)
+    1368:	6812      	ldr	r2, [r2, #0]
+    136a:	2140      	movs	r1, #64	; 0x40
+    136c:	430a      	orrs	r2, r1
+    136e:	601a      	str	r2, [r3, #0]
+				break;
+    1370:	e009      	b.n	1386 <led_off+0x162>
+			}
+			case 9:
+			{
+				GPIOA_PDOR |= (1 << 4);
+    1372:	4b09      	ldr	r3, [pc, #36]	; (1398 <led_off+0x174>)
+    1374:	4a08      	ldr	r2, [pc, #32]	; (1398 <led_off+0x174>)
+    1376:	6812      	ldr	r2, [r2, #0]
+    1378:	2110      	movs	r1, #16
+    137a:	430a      	orrs	r2, r1
+    137c:	601a      	str	r2, [r3, #0]
+				break;
+    137e:	e002      	b.n	1386 <led_off+0x162>
+				GPIOA_PDOR &= ~(1 << 4);
+				break;
+			}
+			default:
+			{
+				break;
+    1380:	46c0      	nop			; (mov r8, r8)
+    1382:	e000      	b.n	1386 <led_off+0x162>
+				GPIOA_PDOR |= (1 << 4);
+				break;
+			}
+			default:
+			{
+				break;
+    1384:	46c0      	nop			; (mov r8, r8)
+			}
+		}
+	}
+}
+    1386:	46bd      	mov	sp, r7
+    1388:	b002      	add	sp, #8
+    138a:	bd80      	pop	{r7, pc}
+    138c:	00001680 	.word	0x00001680
+    1390:	400ff040 	.word	0x400ff040
+    1394:	fffbffff 	.word	0xfffbffff
+    1398:	400ff000 	.word	0x400ff000
+    139c:	fff7ffff 	.word	0xfff7ffff
+    13a0:	400ff080 	.word	0x400ff080
+    13a4:	400ff0c0 	.word	0x400ff0c0
+    13a8:	ffffefff 	.word	0xffffefff
+    13ac:	000016a8 	.word	0x000016a8
+
+000013b0 <led_all_off>:
+
+//Turn off first n LEDs
+void led_all_off(led_logic_t logic, uint32_t led_number)
+{
+    13b0:	b580      	push	{r7, lr}
+    13b2:	b084      	sub	sp, #16
+    13b4:	af00      	add	r7, sp, #0
+    13b6:	1c02      	adds	r2, r0, #0
+    13b8:	6039      	str	r1, [r7, #0]
+    13ba:	1dfb      	adds	r3, r7, #7
+    13bc:	701a      	strb	r2, [r3, #0]
+	for(uint32_t i = 0; i < led_number; i++)
+    13be:	2300      	movs	r3, #0
+    13c0:	60fb      	str	r3, [r7, #12]
+    13c2:	e009      	b.n	13d8 <led_all_off+0x28>
+	{
+		led_off(logic, i);
+    13c4:	1dfb      	adds	r3, r7, #7
+    13c6:	781a      	ldrb	r2, [r3, #0]
+    13c8:	68fb      	ldr	r3, [r7, #12]
+    13ca:	1c10      	adds	r0, r2, #0
+    13cc:	1c19      	adds	r1, r3, #0
+    13ce:	f7ff ff29 	bl	1224 <led_off>
+}
+
+//Turn off first n LEDs
+void led_all_off(led_logic_t logic, uint32_t led_number)
+{
+	for(uint32_t i = 0; i < led_number; i++)
+    13d2:	68fb      	ldr	r3, [r7, #12]
+    13d4:	3301      	adds	r3, #1
+    13d6:	60fb      	str	r3, [r7, #12]
+    13d8:	68fa      	ldr	r2, [r7, #12]
+    13da:	683b      	ldr	r3, [r7, #0]
+    13dc:	429a      	cmp	r2, r3
+    13de:	d3f1      	bcc.n	13c4 <led_all_off+0x14>
+	{
+		led_off(logic, i);
+	}
+}
+    13e0:	46bd      	mov	sp, r7
+    13e2:	b004      	add	sp, #16
+    13e4:	bd80      	pop	{r7, pc}
+    13e6:	46c0      	nop			; (mov r8, r8)
+
+000013e8 <int_cfg_priority>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: int_cfg_priority()
+//----------------------------------------------------------------------------------------------------------------------
+void int_cfg_priority(int_src_t p_src, int_priority_t p_priority)
+{
+    13e8:	b580      	push	{r7, lr}
+    13ea:	b086      	sub	sp, #24
+    13ec:	af00      	add	r7, sp, #0
+    13ee:	1c0a      	adds	r2, r1, #0
+    13f0:	1dfb      	adds	r3, r7, #7
+    13f2:	1c01      	adds	r1, r0, #0
+    13f4:	7019      	strb	r1, [r3, #0]
+    13f6:	1dbb      	adds	r3, r7, #6
+    13f8:	701a      	strb	r2, [r3, #0]
+    int ipr_reg_num = p_src >> 2;               // ipr_reg_num is number of the NVIC_IPR register
+    13fa:	1dfb      	adds	r3, r7, #7
+    13fc:	781b      	ldrb	r3, [r3, #0]
+    13fe:	089b      	lsrs	r3, r3, #2
+    1400:	b2db      	uxtb	r3, r3
+    1402:	617b      	str	r3, [r7, #20]
+    int bit_pos = (p_src % 4) << 3;             // bit_pos is the least-significant bit of the proper PRI_xx field
+    1404:	1dfb      	adds	r3, r7, #7
+    1406:	781a      	ldrb	r2, [r3, #0]
+    1408:	2303      	movs	r3, #3
+    140a:	4013      	ands	r3, r2
+    140c:	00db      	lsls	r3, r3, #3
+    140e:	613b      	str	r3, [r7, #16]
+    uint32_t nvic_iprn = NVIC_IP(ipr_reg_num);  // nvic_iprn is the current value of NVIC_IPR<ipr_reg_num>
+    1410:	4b10      	ldr	r3, [pc, #64]	; (1454 <int_cfg_priority+0x6c>)
+    1412:	697a      	ldr	r2, [r7, #20]
+    1414:	32c0      	adds	r2, #192	; 0xc0
+    1416:	0092      	lsls	r2, r2, #2
+    1418:	58d3      	ldr	r3, [r2, r3]
+    141a:	60fb      	str	r3, [r7, #12]
+    nvic_iprn &= ~(0b11111111 << bit_pos);      // Clear the PRI_xx field
+    141c:	22ff      	movs	r2, #255	; 0xff
+    141e:	693b      	ldr	r3, [r7, #16]
+    1420:	1c11      	adds	r1, r2, #0
+    1422:	4099      	lsls	r1, r3
+    1424:	1c0b      	adds	r3, r1, #0
+    1426:	43db      	mvns	r3, r3
+    1428:	1c1a      	adds	r2, r3, #0
+    142a:	68fb      	ldr	r3, [r7, #12]
+    142c:	4013      	ands	r3, r2
+    142e:	60fb      	str	r3, [r7, #12]
+    nvic_iprn |= p_priority << bit_pos;         // Write the priority into the PRI_xx field
+    1430:	1dbb      	adds	r3, r7, #6
+    1432:	781a      	ldrb	r2, [r3, #0]
+    1434:	693b      	ldr	r3, [r7, #16]
+    1436:	1c11      	adds	r1, r2, #0
+    1438:	4099      	lsls	r1, r3
+    143a:	1c0b      	adds	r3, r1, #0
+    143c:	68fa      	ldr	r2, [r7, #12]
+    143e:	4313      	orrs	r3, r2
+    1440:	60fb      	str	r3, [r7, #12]
+    NVIC_IP(ipr_reg_num) = nvic_iprn;           // Update NVIC_IPR<ipr_reg_num>
+    1442:	4b04      	ldr	r3, [pc, #16]	; (1454 <int_cfg_priority+0x6c>)
+    1444:	697a      	ldr	r2, [r7, #20]
+    1446:	32c0      	adds	r2, #192	; 0xc0
+    1448:	0092      	lsls	r2, r2, #2
+    144a:	68f9      	ldr	r1, [r7, #12]
+    144c:	50d1      	str	r1, [r2, r3]
+}
+    144e:	46bd      	mov	sp, r7
+    1450:	b006      	add	sp, #24
+    1452:	bd80      	pop	{r7, pc}
+    1454:	e000e100 	.word	0xe000e100
+
+00001458 <int_cfg_state>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: int_cfg_state()
+//----------------------------------------------------------------------------------------------------------------------
+void int_cfg_state(int_src_t p_src, int_state_t p_state)
+{
+    1458:	b590      	push	{r4, r7, lr}
+    145a:	b083      	sub	sp, #12
+    145c:	af00      	add	r7, sp, #0
+    145e:	1c0a      	adds	r2, r1, #0
+    1460:	1dfb      	adds	r3, r7, #7
+    1462:	1c01      	adds	r1, r0, #0
+    1464:	7019      	strb	r1, [r3, #0]
+    1466:	1dbb      	adds	r3, r7, #6
+    1468:	701a      	strb	r2, [r3, #0]
+    if (p_state == int_state_enabled) {
+    146a:	1dbb      	adds	r3, r7, #6
+    146c:	781b      	ldrb	r3, [r3, #0]
+    146e:	2b01      	cmp	r3, #1
+    1470:	d10b      	bne.n	148a <int_cfg_state+0x32>
+        NVIC_ISER |= 1 << p_src;
+    1472:	4b0e      	ldr	r3, [pc, #56]	; (14ac <int_cfg_state+0x54>)
+    1474:	4a0d      	ldr	r2, [pc, #52]	; (14ac <int_cfg_state+0x54>)
+    1476:	6811      	ldr	r1, [r2, #0]
+    1478:	1dfa      	adds	r2, r7, #7
+    147a:	7812      	ldrb	r2, [r2, #0]
+    147c:	2001      	movs	r0, #1
+    147e:	1c04      	adds	r4, r0, #0
+    1480:	4094      	lsls	r4, r2
+    1482:	1c22      	adds	r2, r4, #0
+    1484:	430a      	orrs	r2, r1
+    1486:	601a      	str	r2, [r3, #0]
+    1488:	e00c      	b.n	14a4 <int_cfg_state+0x4c>
+    } else {
+        NVIC_ICER |= 1 << p_src;
+    148a:	4a08      	ldr	r2, [pc, #32]	; (14ac <int_cfg_state+0x54>)
+    148c:	4907      	ldr	r1, [pc, #28]	; (14ac <int_cfg_state+0x54>)
+    148e:	2380      	movs	r3, #128	; 0x80
+    1490:	58c9      	ldr	r1, [r1, r3]
+    1492:	1dfb      	adds	r3, r7, #7
+    1494:	781b      	ldrb	r3, [r3, #0]
+    1496:	2001      	movs	r0, #1
+    1498:	1c04      	adds	r4, r0, #0
+    149a:	409c      	lsls	r4, r3
+    149c:	1c23      	adds	r3, r4, #0
+    149e:	4319      	orrs	r1, r3
+    14a0:	2380      	movs	r3, #128	; 0x80
+    14a2:	50d1      	str	r1, [r2, r3]
+    }
+}
+    14a4:	46bd      	mov	sp, r7
+    14a6:	b003      	add	sp, #12
+    14a8:	bd90      	pop	{r4, r7, pc}
+    14aa:	46c0      	nop			; (mov r8, r8)
+    14ac:	e000e100 	.word	0xe000e100
+
+000014b0 <int_init>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: int_init()
+//----------------------------------------------------------------------------------------------------------------------
+void int_init(int_src_t p_src, int_priority_t p_priority, int_state_t p_state)
+{
+    14b0:	b580      	push	{r7, lr}
+    14b2:	b082      	sub	sp, #8
+    14b4:	af00      	add	r7, sp, #0
+    14b6:	1dfb      	adds	r3, r7, #7
+    14b8:	7018      	strb	r0, [r3, #0]
+    14ba:	1dbb      	adds	r3, r7, #6
+    14bc:	7019      	strb	r1, [r3, #0]
+    14be:	1d7b      	adds	r3, r7, #5
+    14c0:	701a      	strb	r2, [r3, #0]
+    int_cfg_priority(p_src, p_priority);   // Configure the priority
+    14c2:	1dfb      	adds	r3, r7, #7
+    14c4:	781a      	ldrb	r2, [r3, #0]
+    14c6:	1dbb      	adds	r3, r7, #6
+    14c8:	781b      	ldrb	r3, [r3, #0]
+    14ca:	1c10      	adds	r0, r2, #0
+    14cc:	1c19      	adds	r1, r3, #0
+    14ce:	f7ff ff8b 	bl	13e8 <int_cfg_priority>
+    int_cfg_state(p_src, p_state);         // Configure the state to be enabled or disabled
+    14d2:	1dfb      	adds	r3, r7, #7
+    14d4:	781a      	ldrb	r2, [r3, #0]
+    14d6:	1d7b      	adds	r3, r7, #5
+    14d8:	781b      	ldrb	r3, [r3, #0]
+    14da:	1c10      	adds	r0, r2, #0
+    14dc:	1c19      	adds	r1, r3, #0
+    14de:	f7ff ffbb 	bl	1458 <int_cfg_state>
+}
+    14e2:	46bd      	mov	sp, r7
+    14e4:	b002      	add	sp, #8
+    14e6:	bd80      	pop	{r7, pc}
+
+000014e8 <int_mask_all>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: int_mask_all()
+//----------------------------------------------------------------------------------------------------------------------
+void int_mask_all()
+{
+    14e8:	b580      	push	{r7, lr}
+    14ea:	af00      	add	r7, sp, #0
+    __asm("cpsid i");
+    14ec:	b672      	cpsid	i
+}
+    14ee:	46bd      	mov	sp, r7
+    14f0:	bd80      	pop	{r7, pc}
+    14f2:	46c0      	nop			; (mov r8, r8)
+
+000014f4 <int_unmask_all>:
+
+//----------------------------------------------------------------------------------------------------------------------
+// FUNCTION: int_unmask_all()
+//----------------------------------------------------------------------------------------------------------------------
+void int_unmask_all()
+{
+    14f4:	b580      	push	{r7, lr}
+    14f6:	af00      	add	r7, sp, #0
+    __asm("cpsie i");
+    14f8:	b662      	cpsie	i
+}
+    14fa:	46bd      	mov	sp, r7
+    14fc:	bd80      	pop	{r7, pc}
+    14fe:	46c0      	nop			; (mov r8, r8)
+
+00001500 <gpioa_pddr_config>:
+
+#include "gpio.h"
+
+//configures PORT A GPIO pins for input or output
+void gpioa_pddr_config(uint32_t pin, uint32_t direction)
+{
+    1500:	b590      	push	{r4, r7, lr}
+    1502:	b083      	sub	sp, #12
+    1504:	af00      	add	r7, sp, #0
+    1506:	6078      	str	r0, [r7, #4]
+    1508:	6039      	str	r1, [r7, #0]
+	//if direction is input (GPIO_PDDR_IN)
+	if(direction == 0)
+    150a:	683b      	ldr	r3, [r7, #0]
+    150c:	2b00      	cmp	r3, #0
+    150e:	d10b      	bne.n	1528 <gpioa_pddr_config+0x28>
+	{
+		GPIOA_PDDR &= ~(1 << pin);
+    1510:	4b0d      	ldr	r3, [pc, #52]	; (1548 <gpioa_pddr_config+0x48>)
+    1512:	4a0d      	ldr	r2, [pc, #52]	; (1548 <gpioa_pddr_config+0x48>)
+    1514:	6952      	ldr	r2, [r2, #20]
+    1516:	6879      	ldr	r1, [r7, #4]
+    1518:	2001      	movs	r0, #1
+    151a:	1c04      	adds	r4, r0, #0
+    151c:	408c      	lsls	r4, r1
+    151e:	1c21      	adds	r1, r4, #0
+    1520:	43c9      	mvns	r1, r1
+    1522:	400a      	ands	r2, r1
+    1524:	615a      	str	r2, [r3, #20]
+    1526:	e00c      	b.n	1542 <gpioa_pddr_config+0x42>
+	}
+	//if direction is output (GPIO_PDDR_OUT)	
+	else if(direction == 1)
+    1528:	683b      	ldr	r3, [r7, #0]
+    152a:	2b01      	cmp	r3, #1
+    152c:	d109      	bne.n	1542 <gpioa_pddr_config+0x42>
+	{
+		GPIOA_PDDR |= (1 << pin);
+    152e:	4b06      	ldr	r3, [pc, #24]	; (1548 <gpioa_pddr_config+0x48>)
+    1530:	4a05      	ldr	r2, [pc, #20]	; (1548 <gpioa_pddr_config+0x48>)
+    1532:	6951      	ldr	r1, [r2, #20]
+    1534:	687a      	ldr	r2, [r7, #4]
+    1536:	2001      	movs	r0, #1
+    1538:	1c04      	adds	r4, r0, #0
+    153a:	4094      	lsls	r4, r2
+    153c:	1c22      	adds	r2, r4, #0
+    153e:	430a      	orrs	r2, r1
+    1540:	615a      	str	r2, [r3, #20]
+	}
+}
+    1542:	46bd      	mov	sp, r7
+    1544:	b003      	add	sp, #12
+    1546:	bd90      	pop	{r4, r7, pc}
+    1548:	400ff000 	.word	0x400ff000
+
+0000154c <gpiob_pddr_config>:
+
+//configures PORT B GPIO pins for input or output
+void gpiob_pddr_config(uint32_t pin, uint32_t direction)
+{
+    154c:	b590      	push	{r4, r7, lr}
+    154e:	b083      	sub	sp, #12
+    1550:	af00      	add	r7, sp, #0
+    1552:	6078      	str	r0, [r7, #4]
+    1554:	6039      	str	r1, [r7, #0]
+	//if direction is input (GPIO_PDDR_IN)
+	if(direction == 0)
+    1556:	683b      	ldr	r3, [r7, #0]
+    1558:	2b00      	cmp	r3, #0
+    155a:	d10b      	bne.n	1574 <gpiob_pddr_config+0x28>
+	{
+		GPIOB_PDDR &= ~(1 << pin);
+    155c:	4b0d      	ldr	r3, [pc, #52]	; (1594 <gpiob_pddr_config+0x48>)
+    155e:	4a0d      	ldr	r2, [pc, #52]	; (1594 <gpiob_pddr_config+0x48>)
+    1560:	6952      	ldr	r2, [r2, #20]
+    1562:	6879      	ldr	r1, [r7, #4]
+    1564:	2001      	movs	r0, #1
+    1566:	1c04      	adds	r4, r0, #0
+    1568:	408c      	lsls	r4, r1
+    156a:	1c21      	adds	r1, r4, #0
+    156c:	43c9      	mvns	r1, r1
+    156e:	400a      	ands	r2, r1
+    1570:	615a      	str	r2, [r3, #20]
+    1572:	e00c      	b.n	158e <gpiob_pddr_config+0x42>
+	}
+	//if direction is output (GPIO_PDDR_OUT)
+	else if(direction == 1)
+    1574:	683b      	ldr	r3, [r7, #0]
+    1576:	2b01      	cmp	r3, #1
+    1578:	d109      	bne.n	158e <gpiob_pddr_config+0x42>
+	{
+		GPIOB_PDDR |= (1 << pin);
+    157a:	4b06      	ldr	r3, [pc, #24]	; (1594 <gpiob_pddr_config+0x48>)
+    157c:	4a05      	ldr	r2, [pc, #20]	; (1594 <gpiob_pddr_config+0x48>)
+    157e:	6951      	ldr	r1, [r2, #20]
+    1580:	687a      	ldr	r2, [r7, #4]
+    1582:	2001      	movs	r0, #1
+    1584:	1c04      	adds	r4, r0, #0
+    1586:	4094      	lsls	r4, r2
+    1588:	1c22      	adds	r2, r4, #0
+    158a:	430a      	orrs	r2, r1
+    158c:	615a      	str	r2, [r3, #20]
+	}
+}
+    158e:	46bd      	mov	sp, r7
+    1590:	b003      	add	sp, #12
+    1592:	bd90      	pop	{r4, r7, pc}
+    1594:	400ff040 	.word	0x400ff040
+
+00001598 <gpioc_pddr_config>:
+
+//configures PORT D GPIO pins for input or output
+void gpioc_pddr_config(uint32_t pin, uint32_t direction)
+{
+    1598:	b590      	push	{r4, r7, lr}
+    159a:	b083      	sub	sp, #12
+    159c:	af00      	add	r7, sp, #0
+    159e:	6078      	str	r0, [r7, #4]
+    15a0:	6039      	str	r1, [r7, #0]
+	//if direction is input (GPIO_PDDR_IN)
+	if(direction == 0)
+    15a2:	683b      	ldr	r3, [r7, #0]
+    15a4:	2b00      	cmp	r3, #0
+    15a6:	d10b      	bne.n	15c0 <gpioc_pddr_config+0x28>
+	{
+		GPIOC_PDDR &= ~(1 << pin);
+    15a8:	4b0d      	ldr	r3, [pc, #52]	; (15e0 <gpioc_pddr_config+0x48>)
+    15aa:	4a0d      	ldr	r2, [pc, #52]	; (15e0 <gpioc_pddr_config+0x48>)
+    15ac:	6952      	ldr	r2, [r2, #20]
+    15ae:	6879      	ldr	r1, [r7, #4]
+    15b0:	2001      	movs	r0, #1
+    15b2:	1c04      	adds	r4, r0, #0
+    15b4:	408c      	lsls	r4, r1
+    15b6:	1c21      	adds	r1, r4, #0
+    15b8:	43c9      	mvns	r1, r1
+    15ba:	400a      	ands	r2, r1
+    15bc:	615a      	str	r2, [r3, #20]
+    15be:	e00c      	b.n	15da <gpioc_pddr_config+0x42>
+	}
+	//if direction is output (GPIO_PDDR_OUT)
+	else if(direction == 1)
+    15c0:	683b      	ldr	r3, [r7, #0]
+    15c2:	2b01      	cmp	r3, #1
+    15c4:	d109      	bne.n	15da <gpioc_pddr_config+0x42>
+	{
+		GPIOC_PDDR |= (1 << pin);
+    15c6:	4b06      	ldr	r3, [pc, #24]	; (15e0 <gpioc_pddr_config+0x48>)
+    15c8:	4a05      	ldr	r2, [pc, #20]	; (15e0 <gpioc_pddr_config+0x48>)
+    15ca:	6951      	ldr	r1, [r2, #20]
+    15cc:	687a      	ldr	r2, [r7, #4]
+    15ce:	2001      	movs	r0, #1
+    15d0:	1c04      	adds	r4, r0, #0
+    15d2:	4094      	lsls	r4, r2
+    15d4:	1c22      	adds	r2, r4, #0
+    15d6:	430a      	orrs	r2, r1
+    15d8:	615a      	str	r2, [r3, #20]
+	}
+}
+    15da:	46bd      	mov	sp, r7
+    15dc:	b003      	add	sp, #12
+    15de:	bd90      	pop	{r4, r7, pc}
+    15e0:	400ff080 	.word	0x400ff080
+
+000015e4 <gpiod_pddr_config>:
+
+//configures PORT D GPIO pins for input or output
+void gpiod_pddr_config(uint32_t pin, uint32_t direction)
+{
+    15e4:	b590      	push	{r4, r7, lr}
+    15e6:	b083      	sub	sp, #12
+    15e8:	af00      	add	r7, sp, #0
+    15ea:	6078      	str	r0, [r7, #4]
+    15ec:	6039      	str	r1, [r7, #0]
+	//if direction is input (GPIO_PDDR_IN)
+	if(direction == 0)
+    15ee:	683b      	ldr	r3, [r7, #0]
+    15f0:	2b00      	cmp	r3, #0
+    15f2:	d10b      	bne.n	160c <gpiod_pddr_config+0x28>
+	{
+		GPIOD_PDDR &= ~(1 << pin);
+    15f4:	4b0d      	ldr	r3, [pc, #52]	; (162c <gpiod_pddr_config+0x48>)
+    15f6:	4a0d      	ldr	r2, [pc, #52]	; (162c <gpiod_pddr_config+0x48>)
+    15f8:	6952      	ldr	r2, [r2, #20]
+    15fa:	6879      	ldr	r1, [r7, #4]
+    15fc:	2001      	movs	r0, #1
+    15fe:	1c04      	adds	r4, r0, #0
+    1600:	408c      	lsls	r4, r1
+    1602:	1c21      	adds	r1, r4, #0
+    1604:	43c9      	mvns	r1, r1
+    1606:	400a      	ands	r2, r1
+    1608:	615a      	str	r2, [r3, #20]
+    160a:	e00c      	b.n	1626 <gpiod_pddr_config+0x42>
+	}
+	//if direction is output (GPIO_PDDR_OUT)
+	else if(direction == 1)
+    160c:	683b      	ldr	r3, [r7, #0]
+    160e:	2b01      	cmp	r3, #1
+    1610:	d109      	bne.n	1626 <gpiod_pddr_config+0x42>
+	{
+		GPIOD_PDDR |= (1 << pin);
+    1612:	4b06      	ldr	r3, [pc, #24]	; (162c <gpiod_pddr_config+0x48>)
+    1614:	4a05      	ldr	r2, [pc, #20]	; (162c <gpiod_pddr_config+0x48>)
+    1616:	6951      	ldr	r1, [r2, #20]
+    1618:	687a      	ldr	r2, [r7, #4]
+    161a:	2001      	movs	r0, #1
+    161c:	1c04      	adds	r4, r0, #0
+    161e:	4094      	lsls	r4, r2
+    1620:	1c22      	adds	r2, r4, #0
+    1622:	430a      	orrs	r2, r1
+    1624:	615a      	str	r2, [r3, #20]
+	}
+}
+    1626:	46bd      	mov	sp, r7
+    1628:	b003      	add	sp, #12
+    162a:	bd90      	pop	{r4, r7, pc}
+    162c:	400ff0c0 	.word	0x400ff0c0
+    1630:	000010c2 	.word	0x000010c2
+    1634:	000010d2 	.word	0x000010d2
+    1638:	000010e0 	.word	0x000010e0
+    163c:	000010f0 	.word	0x000010f0
+    1640:	000010fe 	.word	0x000010fe
+    1644:	0000110c 	.word	0x0000110c
+    1648:	0000111a 	.word	0x0000111a
+    164c:	00001128 	.word	0x00001128
+    1650:	00001138 	.word	0x00001138
+    1654:	00001146 	.word	0x00001146
+    1658:	00001168 	.word	0x00001168
+    165c:	00001176 	.word	0x00001176
+    1660:	00001184 	.word	0x00001184
+    1664:	00001192 	.word	0x00001192
+    1668:	000011a0 	.word	0x000011a0
+    166c:	000011ae 	.word	0x000011ae
+    1670:	000011bc 	.word	0x000011bc
+    1674:	000011ca 	.word	0x000011ca
+    1678:	000011d8 	.word	0x000011d8
+    167c:	000011e6 	.word	0x000011e6
+    1680:	0000124e 	.word	0x0000124e
+    1684:	0000125c 	.word	0x0000125c
+    1688:	0000126a 	.word	0x0000126a
+    168c:	00001278 	.word	0x00001278
+    1690:	00001286 	.word	0x00001286
+    1694:	00001294 	.word	0x00001294
+    1698:	000012a2 	.word	0x000012a2
+    169c:	000012b0 	.word	0x000012b0
+    16a0:	000012be 	.word	0x000012be
+    16a4:	000012cc 	.word	0x000012cc
+    16a8:	000012ee 	.word	0x000012ee
+    16ac:	000012fe 	.word	0x000012fe
+    16b0:	0000130c 	.word	0x0000130c
+    16b4:	0000131c 	.word	0x0000131c
+    16b8:	0000132a 	.word	0x0000132a
+    16bc:	00001338 	.word	0x00001338
+    16c0:	00001346 	.word	0x00001346
+    16c4:	00001354 	.word	0x00001354
+    16c8:	00001364 	.word	0x00001364
+    16cc:	00001372 	.word	0x00001372
